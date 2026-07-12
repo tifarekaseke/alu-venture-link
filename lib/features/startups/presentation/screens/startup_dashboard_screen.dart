@@ -16,6 +16,7 @@ import 'create_startup_profile_screen.dart';
 import '../../../notifications/presentation/cubit/notification_cubit.dart';
 import '../../../notifications/presentation/screens/notifications_screen.dart';
 import '../../../notifications/presentation/widgets/notification_bell.dart';
+import '../../../analytics/presentation/screens/startup_analytics_screen.dart';
 
 class StartupDashboardScreen extends StatefulWidget {
   final AppUser user;
@@ -99,6 +100,19 @@ class _StartupDashboardScreenState
       ),
     );
   },
+),
+   IconButton(
+  tooltip: 'Analytics',
+  onPressed: () {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => StartupAnalyticsScreen(
+          user: widget.user,
+        ),
+      ),
+    );
+  },
+  icon: const Icon(Icons.insights_outlined),
 ),
         IconButton(
           tooltip: 'Applicants',

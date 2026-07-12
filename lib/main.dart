@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app/app.dart';
+import 'features/analytics/data/repositories/startup_analytics_repository.dart';
+import 'features/analytics/presentation/cubit/analytics_cubit.dart';
 import 'features/applications/data/repositories/application_repository.dart';
 import 'features/applications/presentation/cubit/application_cubit.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
@@ -33,6 +35,8 @@ Future<void> main() async {
   final startupRepository = StartupRepository();
   final profileRepository = ProfileRepository();
   final notificationRepository = NotificationRepository();
+  final startupAnalyticsRepository =
+      StartupAnalyticsRepository();
 
   runApp(
     MultiRepositoryProvider(
@@ -57,6 +61,9 @@ Future<void> main() async {
         ),
         RepositoryProvider<NotificationRepository>.value(
           value: notificationRepository,
+        ),
+        RepositoryProvider<StartupAnalyticsRepository>.value(
+          value: startupAnalyticsRepository,
         ),
       ],
       child: MultiBlocProvider(
@@ -87,6 +94,10 @@ Future<void> main() async {
           BlocProvider<NotificationCubit>(
             create: (_) =>
                 NotificationCubit(notificationRepository),
+          ),
+          BlocProvider<AnalyticsCubit>(
+            create: (_) =>
+                AnalyticsCubit(startupAnalyticsRepository),
           ),
         ],
         child: const VentureLinkApp(),
