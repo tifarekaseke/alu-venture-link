@@ -17,24 +17,17 @@ class AuthGate extends StatelessWidget {
       builder: (context, state) {
         if (state is AuthAuthenticated) {
           if (state.user.isAdmin) {
-            return AdminVerificationScreen(
-              user: state.user,
-            );
+            return AdminVerificationScreen(user: state.user);
           }
 
           if (state.user.isStartup) {
-            return StartupNavigationScreen(
-              user: state.user,
-            );
+            return StartupNavigationScreen(user: state.user);
           }
 
-          return StudentNavigationScreen(
-            user: state.user,
-          );
+          return StudentNavigationScreen(user: state.user);
         }
 
-        if (state is AuthUnauthenticated ||
-            state is AuthFailure) {
+        if (state is AuthUnauthenticated || state is AuthFailure) {
           return const LoginScreen();
         }
 

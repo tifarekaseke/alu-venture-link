@@ -26,9 +26,7 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
-  Future<void> _handleAuthenticationChange(
-    User? firebaseUser,
-  ) async {
+  Future<void> _handleAuthenticationChange(User? firebaseUser) async {
     await _profileSubscription?.cancel();
 
     if (firebaseUser == null) {
@@ -39,8 +37,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const AuthLoading());
 
     try {
-      final profile =
-          await _authRepository.getUserProfile(firebaseUser.uid);
+      final profile = await _authRepository.getUserProfile(firebaseUser.uid);
 
       if (profile == null) {
         await _authRepository.signOut();
@@ -58,27 +55,25 @@ class AuthCubit extends Cubit<AuthState> {
       _profileSubscription = _authRepository
           .watchUserProfile(firebaseUser.uid)
           .listen(
-        (updatedProfile) {
-          if (updatedProfile != null) {
-            emit(AuthAuthenticated(updatedProfile));
-          }
-        },
-        onError: (Object error) {
-          // Keep the last successfully loaded profile visible.
-          // A temporary Firestore interruption should not log the user out.
-        },
-      );
-   } catch (error) {
-  final message = _friendlyError(error);
+            (updatedProfile) {
+              if (updatedProfile != null) {
+                emit(AuthAuthenticated(updatedProfile));
+              }
+            },
+            onError: (Object error) {
+              // Keep the last successfully loaded profile visible.
+              // A temporary Firestore interruption should not log the user out.
+            },
+          );
+    } catch (error) {
+      final message = _friendlyError(error);
 
-  emit(AuthFailure(message));
+      emit(AuthFailure(message));
 
-  await Future<void>.delayed(
-    const Duration(milliseconds: 100),
-  );
+      await Future<void>.delayed(const Duration(milliseconds: 100));
 
-  emit(const AuthUnauthenticated());
-}
+      emit(const AuthUnauthenticated());
+    }
   }
 
   Future<void> register({
@@ -101,17 +96,11 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> signIn({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> signIn({required String email, required String password}) async {
     emit(const AuthLoading());
 
     try {
-      await _authRepository.signIn(
-        email: email,
-        password: password,
-      );
+      await _authRepository.signIn(email: email, password: password);
     } catch (error) {
       emit(AuthFailure(_friendlyError(error)));
     }
@@ -160,8 +149,7 @@ class AuthCubit extends Cubit<AuthState> {
         case 'network-request-failed':
           return 'Firebase could not connect. Check your internet connection.';
         default:
-          return error.message ??
-              'Authentication could not be completed.';
+          return error.message ?? 'Authentication could not be completed.';
       }
     }
 

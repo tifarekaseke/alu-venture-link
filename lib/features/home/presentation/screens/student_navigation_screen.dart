@@ -9,18 +9,14 @@ import 'student_home_screen.dart';
 class StudentNavigationScreen extends StatefulWidget {
   final AppUser user;
 
-  const StudentNavigationScreen({
-    required this.user,
-    super.key,
-  });
+  const StudentNavigationScreen({required this.user, super.key});
 
   @override
   State<StudentNavigationScreen> createState() =>
       _StudentNavigationScreenState();
 }
 
-class _StudentNavigationScreenState
-    extends State<StudentNavigationScreen> {
+class _StudentNavigationScreenState extends State<StudentNavigationScreen> {
   int _selectedIndex = 0;
 
   late final List<Widget> _screens;
@@ -30,15 +26,9 @@ class _StudentNavigationScreenState
     super.initState();
 
     _screens = [
-      StudentHomeScreen(
-        user: widget.user,
-      ),
-      SavedOpportunitiesScreen(
-        user: widget.user,
-      ),
-      MyApplicationsScreen(
-        user: widget.user,
-      ),
+      StudentHomeScreen(user: widget.user),
+      SavedOpportunitiesScreen(user: widget.user),
+      MyApplicationsScreen(user: widget.user),
       const StudentProfileScreen(),
     ];
   }
@@ -52,10 +42,7 @@ class _StudentNavigationScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: _selectDestination,

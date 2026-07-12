@@ -13,7 +13,7 @@ class NotificationCubit extends Cubit<NotificationState> {
   StreamSubscription<List<AppNotification>>? _subscription;
 
   NotificationCubit(this._notificationRepository)
-      : super(const NotificationInitial());
+    : super(const NotificationInitial());
 
   void watchNotifications(String userId) {
     emit(const NotificationLoading());
@@ -23,22 +23,18 @@ class NotificationCubit extends Cubit<NotificationState> {
     _subscription = _notificationRepository
         .watchNotifications(userId)
         .listen(
-      (notifications) {
-        emit(NotificationLoaded(notifications));
-      },
-      onError: (Object error) {
-        emit(NotificationFailure(_friendlyError(error)));
-      },
-    );
+          (notifications) {
+            emit(NotificationLoaded(notifications));
+          },
+          onError: (Object error) {
+            emit(NotificationFailure(_friendlyError(error)));
+          },
+        );
   }
 
-  Future<void> markAsRead(
-    String notificationId,
-  ) async {
+  Future<void> markAsRead(String notificationId) async {
     try {
-      await _notificationRepository.markAsRead(
-        notificationId,
-      );
+      await _notificationRepository.markAsRead(notificationId);
     } catch (error) {
       emit(NotificationFailure(_friendlyError(error)));
     }
@@ -52,13 +48,9 @@ class NotificationCubit extends Cubit<NotificationState> {
     }
   }
 
-  Future<void> deleteNotification(
-    String notificationId,
-  ) async {
+  Future<void> deleteNotification(String notificationId) async {
     try {
-      await _notificationRepository.deleteNotification(
-        notificationId,
-      );
+      await _notificationRepository.deleteNotification(notificationId);
     } catch (error) {
       emit(NotificationFailure(_friendlyError(error)));
     }
@@ -72,8 +64,7 @@ class NotificationCubit extends Cubit<NotificationState> {
         case 'unavailable':
           return 'Notifications are temporarily unavailable.';
         default:
-          return error.message ??
-              'A Firebase notification error occurred.';
+          return error.message ?? 'A Firebase notification error occurred.';
       }
     }
 

@@ -19,28 +19,27 @@ class BookmarkCubit extends Cubit<BookmarkState> {
 
     _subscription?.cancel();
 
-    _subscription = _bookmarkRepository.watchSavedOpportunities(userId).listen(
-      (savedOpportunities) {
-        final savedIds =
-            savedOpportunities.map((opportunity) => opportunity.id).toSet();
+    _subscription = _bookmarkRepository
+        .watchSavedOpportunities(userId)
+        .listen(
+          (savedOpportunities) {
+            final savedIds = savedOpportunities
+                .map((opportunity) => opportunity.id)
+                .toSet();
 
-        emit(
-          BookmarkLoaded(
-            savedOpportunityIds: savedIds,
-            savedOpportunities: savedOpportunities,
-          ),
-        );
-      },
-      onError: (Object error) {
-        debugPrint('BOOKMARK WATCH ERROR: $error');
+            emit(
+              BookmarkLoaded(
+                savedOpportunityIds: savedIds,
+                savedOpportunities: savedOpportunities,
+              ),
+            );
+          },
+          onError: (Object error) {
+            debugPrint('BOOKMARK WATCH ERROR: $error');
 
-        emit(
-          BookmarkFailure(
-            'Could not load saved opportunities: $error',
-          ),
+            emit(BookmarkFailure('Could not load saved opportunities: $error'));
+          },
         );
-      },
-    );
   }
 
   Future<void> toggleBookmark({
@@ -56,11 +55,7 @@ class BookmarkCubit extends Cubit<BookmarkState> {
     } catch (error) {
       debugPrint('BOOKMARK TOGGLE ERROR: $error');
 
-      emit(
-        BookmarkFailure(
-          'Bookmark error: $error',
-        ),
-      );
+      emit(BookmarkFailure('Bookmark error: $error'));
     }
   }
 
@@ -76,11 +71,7 @@ class BookmarkCubit extends Cubit<BookmarkState> {
     } catch (error) {
       debugPrint('BOOKMARK REMOVE ERROR: $error');
 
-      emit(
-        BookmarkFailure(
-          'Remove bookmark error: $error',
-        ),
-      );
+      emit(BookmarkFailure('Remove bookmark error: $error'));
     }
   }
 

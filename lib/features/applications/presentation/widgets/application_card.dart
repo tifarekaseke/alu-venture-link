@@ -8,11 +8,7 @@ class ApplicationCard extends StatelessWidget {
   final ApplicationModel application;
   final Widget? trailing;
 
-  const ApplicationCard({
-    required this.application,
-    this.trailing,
-    super.key,
-  });
+  const ApplicationCard({required this.application, this.trailing, super.key});
 
   Color get _statusColor {
     switch (application.status) {
@@ -41,9 +37,7 @@ class ApplicationCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 14),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(
-          color: Color(0xFFE4E7EC),
-        ),
+        side: const BorderSide(color: Color(0xFFE4E7EC)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(18),
@@ -55,10 +49,7 @@ class ApplicationCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   backgroundColor: _statusColor.withAlpha(25),
-                  child: Icon(
-                    Icons.description_outlined,
-                    color: _statusColor,
-                  ),
+                  child: Icon(Icons.description_outlined, color: _statusColor),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -76,9 +67,7 @@ class ApplicationCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         application.startupName,
-                        style: const TextStyle(
-                          color: AppTheme.textSecondary,
-                        ),
+                        style: const TextStyle(color: AppTheme.textSecondary),
                       ),
                     ],
                   ),

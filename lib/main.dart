@@ -24,9 +24,7 @@ import 'firebase_options.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final authRepository = AuthRepository();
   final opportunityRepository = OpportunityRepository();
@@ -35,30 +33,21 @@ Future<void> main() async {
   final startupRepository = StartupRepository();
   final profileRepository = ProfileRepository();
   final notificationRepository = NotificationRepository();
-  final startupAnalyticsRepository =
-      StartupAnalyticsRepository();
+  final startupAnalyticsRepository = StartupAnalyticsRepository();
 
   runApp(
     MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<AuthRepository>.value(
-          value: authRepository,
-        ),
+        RepositoryProvider<AuthRepository>.value(value: authRepository),
         RepositoryProvider<OpportunityRepository>.value(
           value: opportunityRepository,
         ),
         RepositoryProvider<ApplicationRepository>.value(
           value: applicationRepository,
         ),
-        RepositoryProvider<BookmarkRepository>.value(
-          value: bookmarkRepository,
-        ),
-        RepositoryProvider<StartupRepository>.value(
-          value: startupRepository,
-        ),
-        RepositoryProvider<ProfileRepository>.value(
-          value: profileRepository,
-        ),
+        RepositoryProvider<BookmarkRepository>.value(value: bookmarkRepository),
+        RepositoryProvider<StartupRepository>.value(value: startupRepository),
+        RepositoryProvider<ProfileRepository>.value(value: profileRepository),
         RepositoryProvider<NotificationRepository>.value(
           value: notificationRepository,
         ),
@@ -68,36 +57,27 @@ Future<void> main() async {
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider<AuthCubit>(
-            create: (_) => AuthCubit(authRepository),
-          ),
+          BlocProvider<AuthCubit>(create: (_) => AuthCubit(authRepository)),
           BlocProvider<OpportunityCubit>(
-            create: (_) =>
-                OpportunityCubit(opportunityRepository),
+            create: (_) => OpportunityCubit(opportunityRepository),
           ),
           BlocProvider<ApplicationCubit>(
-            create: (_) =>
-                ApplicationCubit(applicationRepository),
+            create: (_) => ApplicationCubit(applicationRepository),
           ),
           BlocProvider<BookmarkCubit>(
-            create: (_) =>
-                BookmarkCubit(bookmarkRepository),
+            create: (_) => BookmarkCubit(bookmarkRepository),
           ),
           BlocProvider<StartupCubit>(
-            create: (_) =>
-                StartupCubit(startupRepository),
+            create: (_) => StartupCubit(startupRepository),
           ),
           BlocProvider<ProfileCubit>(
-            create: (_) =>
-                ProfileCubit(profileRepository),
+            create: (_) => ProfileCubit(profileRepository),
           ),
           BlocProvider<NotificationCubit>(
-            create: (_) =>
-                NotificationCubit(notificationRepository),
+            create: (_) => NotificationCubit(notificationRepository),
           ),
           BlocProvider<AnalyticsCubit>(
-            create: (_) =>
-                AnalyticsCubit(startupAnalyticsRepository),
+            create: (_) => AnalyticsCubit(startupAnalyticsRepository),
           ),
         ],
         child: const VentureLinkApp(),

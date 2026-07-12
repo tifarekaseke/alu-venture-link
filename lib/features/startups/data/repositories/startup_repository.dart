@@ -6,9 +6,8 @@ import '../models/startup_profile_model.dart';
 class StartupRepository {
   final FirebaseFirestore _firestore;
 
-  StartupRepository({
-    FirebaseFirestore? firestore,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance;
+  StartupRepository({FirebaseFirestore? firestore})
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   CollectionReference<Map<String, dynamic>> get _startups {
     return _firestore.collection('startups');
@@ -18,9 +17,7 @@ class StartupRepository {
     return _firestore.collection('notifications');
   }
 
-  Stream<StartupProfileModel?> watchStartupProfile(
-    String ownerId,
-  ) {
+  Stream<StartupProfileModel?> watchStartupProfile(String ownerId) {
     return _startups.doc(ownerId).snapshots().map((document) {
       if (!document.exists || document.data() == null) {
         return null;
@@ -32,27 +29,22 @@ class StartupRepository {
 
   Stream<List<StartupProfileModel>> watchPendingProfiles() {
     return _startups
-        .where(
-          'verificationStatus',
-          isEqualTo: 'pending',
-        )
+        .where('verificationStatus', isEqualTo: 'pending')
         .snapshots()
         .map((snapshot) {
-      final profiles = snapshot.docs
-          .map(StartupProfileModel.fromDocument)
-          .toList();
+          final profiles = snapshot.docs
+              .map(StartupProfileModel.fromDocument)
+              .toList();
 
-      profiles.sort((a, b) {
-        final aDate =
-            a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-        final bDate =
-            b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+          profiles.sort((a, b) {
+            final aDate = a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+            final bDate = b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
 
-        return bDate.compareTo(aDate);
-      });
+            return bDate.compareTo(aDate);
+          });
 
-      return profiles;
-    });
+          return profiles;
+        });
   }
 
   Future<void> submitProfile({
@@ -77,8 +69,7 @@ class StartupRepository {
       'industry': industry,
       'ventureStage': ventureStage,
       'recognitionType': recognitionType,
-      'recognitionReference':
-          recognitionReference.trim(),
+      'recognitionReference': recognitionReference.trim(),
       'website': website.trim(),
       'verificationStatus': 'pending',
       'rejectionReason': '',
@@ -91,10 +82,7 @@ class StartupRepository {
       data['createdAt'] = FieldValue.serverTimestamp();
     }
 
-    await document.set(
-      data,
-      SetOptions(merge: true),
-    );
+    await document.set(data, SetOptions(merge: true));
   }
 
   Future<void> approveProfile({
@@ -149,8 +137,7 @@ class StartupRepository {
       'recipientId': profileId,
       'senderId': adminId,
       'title': 'Startup verification needs changes',
-      'message':
-          'Your startup verification was not approved: ${reason.trim()}',
+      'message': 'Your startup verification was not approved: ${reason.trim()}',
       'type': 'verification_rejected',
       'referenceId': profileId,
       'isRead': false,

@@ -9,11 +9,9 @@ class AuthRepository {
   final FirebaseAuth _firebaseAuth;
   final FirebaseFirestore _firestore;
 
-  AuthRepository({
-    FirebaseAuth? firebaseAuth,
-    FirebaseFirestore? firestore,
-  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        _firestore = firestore ?? FirebaseFirestore.instance;
+  AuthRepository({FirebaseAuth? firebaseAuth, FirebaseFirestore? firestore})
+    : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+      _firestore = firestore ?? FirebaseFirestore.instance;
 
   Stream<User?> get authStateChanges {
     return _firebaseAuth.authStateChanges();
@@ -78,10 +76,7 @@ class AuthRepository {
         );
   }
 
-  Future<void> signIn({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> signIn({required String email, required String password}) async {
     await _firebaseAuth
         .signInWithEmailAndPassword(
           email: email.trim().toLowerCase(),
@@ -103,9 +98,7 @@ class AuthRepository {
 
   Future<void> sendPasswordResetEmail(String email) async {
     await _firebaseAuth
-        .sendPasswordResetEmail(
-          email: email.trim().toLowerCase(),
-        )
+        .sendPasswordResetEmail(email: email.trim().toLowerCase())
         .timeout(
           const Duration(seconds: 20),
           onTimeout: () {
@@ -140,11 +133,7 @@ class AuthRepository {
   }
 
   Stream<AppUser?> watchUserProfile(String uid) {
-    return _firestore
-        .collection('users')
-        .doc(uid)
-        .snapshots()
-        .map((document) {
+    return _firestore.collection('users').doc(uid).snapshots().map((document) {
       final data = document.data();
 
       if (!document.exists || data == null) {

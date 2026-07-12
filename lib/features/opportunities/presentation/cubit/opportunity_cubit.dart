@@ -12,22 +12,19 @@ class OpportunityCubit extends Cubit<OpportunityState> {
   StreamSubscription<List<OpportunityModel>>? _subscription;
 
   OpportunityCubit(this._opportunityRepository)
-      : super(const OpportunityInitial());
+    : super(const OpportunityInitial());
 
   void watchOpenOpportunities() {
     emit(const OpportunityLoading());
 
     _subscription?.cancel();
 
-    _subscription =
-        _opportunityRepository.watchOpenOpportunities().listen(
+    _subscription = _opportunityRepository.watchOpenOpportunities().listen(
       (opportunities) {
         emit(OpportunityLoaded(opportunities));
       },
       onError: (Object error) {
-        emit(const OpportunityFailure(
-          'Could not load opportunities.',
-        ));
+        emit(const OpportunityFailure('Could not load opportunities.'));
       },
     );
   }
@@ -37,17 +34,20 @@ class OpportunityCubit extends Cubit<OpportunityState> {
 
     _subscription?.cancel();
 
-    _subscription =
-        _opportunityRepository.watchStartupOpportunities(ownerId).listen(
-      (opportunities) {
-        emit(OpportunityLoaded(opportunities));
-      },
-      onError: (Object error) {
-        emit(const OpportunityFailure(
-          'Could not load your startup opportunities.',
-        ));
-      },
-    );
+    _subscription = _opportunityRepository
+        .watchStartupOpportunities(ownerId)
+        .listen(
+          (opportunities) {
+            emit(OpportunityLoaded(opportunities));
+          },
+          onError: (Object error) {
+            emit(
+              const OpportunityFailure(
+                'Could not load your startup opportunities.',
+              ),
+            );
+          },
+        );
   }
 
   Future<void> createOpportunity({
@@ -74,9 +74,7 @@ class OpportunityCubit extends Cubit<OpportunityState> {
         deadline: deadline,
       );
     } catch (error) {
-      emit(const OpportunityFailure(
-        'Could not create the opportunity.',
-      ));
+      emit(const OpportunityFailure('Could not create the opportunity.'));
     }
   }
 
@@ -84,9 +82,7 @@ class OpportunityCubit extends Cubit<OpportunityState> {
     try {
       await _opportunityRepository.closeOpportunity(opportunityId);
     } catch (error) {
-      emit(const OpportunityFailure(
-        'Could not close the opportunity.',
-      ));
+      emit(const OpportunityFailure('Could not close the opportunity.'));
     }
   }
 
@@ -94,9 +90,7 @@ class OpportunityCubit extends Cubit<OpportunityState> {
     try {
       await _opportunityRepository.reopenOpportunity(opportunityId);
     } catch (error) {
-      emit(const OpportunityFailure(
-        'Could not reopen the opportunity.',
-      ));
+      emit(const OpportunityFailure('Could not reopen the opportunity.'));
     }
   }
 
@@ -104,9 +98,7 @@ class OpportunityCubit extends Cubit<OpportunityState> {
     try {
       await _opportunityRepository.deleteOpportunity(opportunityId);
     } catch (error) {
-      emit(const OpportunityFailure(
-        'Could not delete the opportunity.',
-      ));
+      emit(const OpportunityFailure('Could not delete the opportunity.'));
     }
   }
 

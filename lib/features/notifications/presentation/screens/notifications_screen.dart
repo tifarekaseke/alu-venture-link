@@ -11,25 +11,18 @@ import '../cubit/notification_state.dart';
 class NotificationsScreen extends StatefulWidget {
   final AppUser user;
 
-  const NotificationsScreen({
-    required this.user,
-    super.key,
-  });
+  const NotificationsScreen({required this.user, super.key});
 
   @override
-  State<NotificationsScreen> createState() =>
-      _NotificationsScreenState();
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
-class _NotificationsScreenState
-    extends State<NotificationsScreen> {
+class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   void initState() {
     super.initState();
 
-    context
-        .read<NotificationCubit>()
-        .watchNotifications(widget.user.uid);
+    context.read<NotificationCubit>().watchNotifications(widget.user.uid);
   }
 
   @override
@@ -40,15 +33,15 @@ class _NotificationsScreenState
         actions: [
           BlocBuilder<NotificationCubit, NotificationState>(
             builder: (context, state) {
-              final hasUnread = state is NotificationLoaded &&
-                  state.unreadCount > 0;
+              final hasUnread =
+                  state is NotificationLoaded && state.unreadCount > 0;
 
               return TextButton(
                 onPressed: hasUnread
                     ? () {
-                        context
-                            .read<NotificationCubit>()
-                            .markAllAsRead(widget.user.uid);
+                        context.read<NotificationCubit>().markAllAsRead(
+                          widget.user.uid,
+                        );
                       }
                     : null,
                 child: const Text('Mark all read'),
@@ -60,36 +53,26 @@ class _NotificationsScreenState
       body: BlocConsumer<NotificationCubit, NotificationState>(
         listener: (context, state) {
           if (state is NotificationFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
-          if (state is NotificationLoading ||
-              state is NotificationInitial) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+          if (state is NotificationLoading || state is NotificationInitial) {
+            return const Center(child: CircularProgressIndicator());
           }
 
-          if (state is NotificationLoaded &&
-              state.notifications.isEmpty) {
+          if (state is NotificationLoaded && state.notifications.isEmpty) {
             return const _EmptyNotificationsState();
           }
 
           if (state is NotificationLoaded) {
             return ListView.builder(
-              padding: const EdgeInsets.fromLTRB(
-                20,
-                16,
-                20,
-                32,
-              ),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
               itemCount: state.notifications.length,
               itemBuilder: (context, index) {
-                final notification =
-                    state.notifications[index];
+                final notification = state.notifications[index];
 
                 return Dismissible(
                   key: ValueKey(notification.id),
@@ -108,17 +91,17 @@ class _NotificationsScreenState
                     ),
                   ),
                   onDismissed: (_) {
-                    context
-                        .read<NotificationCubit>()
-                        .deleteNotification(notification.id);
+                    context.read<NotificationCubit>().deleteNotification(
+                      notification.id,
+                    );
                   },
                   child: _NotificationCard(
                     notification: notification,
                     onTap: () {
                       if (!notification.isRead) {
-                        context
-                            .read<NotificationCubit>()
-                            .markAsRead(notification.id);
+                        context.read<NotificationCubit>().markAsRead(
+                          notification.id,
+                        );
                       }
                     },
                   ),
@@ -131,10 +114,7 @@ class _NotificationsScreenState
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(28),
-                child: Text(
-                  state.message,
-                  textAlign: TextAlign.center,
-                ),
+                child: Text(state.message, textAlign: TextAlign.center),
               ),
             );
           }
@@ -150,10 +130,7 @@ class _NotificationCard extends StatelessWidget {
   final AppNotification notification;
   final VoidCallback onTap;
 
-  const _NotificationCard({
-    required this.notification,
-    required this.onTap,
-  });
+  const _NotificationCard({required this.notification, required this.onTap});
 
   IconData get _icon {
     switch (notification.type) {
@@ -189,15 +166,12 @@ class _NotificationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final dateText = notification.createdAt == null
         ? 'Just now'
-        : DateFormat('dd MMM, HH:mm')
-            .format(notification.createdAt!);
+        : DateFormat('dd MMM, HH:mm').format(notification.createdAt!);
 
     return Card(
       elevation: 0,
       margin: const EdgeInsets.only(bottom: 12),
-      color: notification.isRead
-          ? Colors.white
-          : const Color(0xFFF4F1FF),
+      color: notification.isRead ? Colors.white : const Color(0xFFF4F1FF),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
@@ -216,16 +190,12 @@ class _NotificationCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 backgroundColor: _iconColor.withAlpha(25),
-                child: Icon(
-                  _icon,
-                  color: _iconColor,
-                ),
+                child: Icon(_icon, color: _iconColor),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -308,10 +278,7 @@ class _EmptyNotificationsState extends StatelessWidget {
             Text(
               'Application and verification updates will appear here.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                height: 1.5,
-                color: AppTheme.textSecondary,
-              ),
+              style: TextStyle(height: 1.5, color: AppTheme.textSecondary),
             ),
           ],
         ),

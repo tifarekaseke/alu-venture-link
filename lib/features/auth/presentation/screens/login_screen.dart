@@ -36,9 +36,9 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     context.read<AuthCubit>().signIn(
-          email: _emailController.text,
-          password: _passwordController.text,
-        );
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
   }
 
   Future<void> _resetPassword() async {
@@ -46,9 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Enter your email address first.'),
-        ),
+        const SnackBar(content: Text('Enter your email address first.')),
       );
       return;
     }
@@ -71,21 +69,16 @@ class _LoginScreenState extends State<LoginScreen> {
         child: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                ),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
           builder: (context, state) {
             final isLoading = state is AuthLoading;
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 32,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -210,9 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: Text(
                             'New to VentureLink?',
-                            style: TextStyle(
-                              color: Colors.grey.shade600,
-                            ),
+                            style: TextStyle(color: Colors.grey.shade600),
                           ),
                         ),
                         const Expanded(child: Divider()),

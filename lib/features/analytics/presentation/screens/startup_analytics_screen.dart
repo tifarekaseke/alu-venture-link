@@ -10,67 +10,48 @@ import '../cubit/analytics_state.dart';
 class StartupAnalyticsScreen extends StatefulWidget {
   final AppUser user;
 
-  const StartupAnalyticsScreen({
-    required this.user,
-    super.key,
-  });
+  const StartupAnalyticsScreen({required this.user, super.key});
 
   @override
-  State<StartupAnalyticsScreen> createState() =>
-      _StartupAnalyticsScreenState();
+  State<StartupAnalyticsScreen> createState() => _StartupAnalyticsScreenState();
 }
 
-class _StartupAnalyticsScreenState
-    extends State<StartupAnalyticsScreen> {
+class _StartupAnalyticsScreenState extends State<StartupAnalyticsScreen> {
   @override
   void initState() {
     super.initState();
 
-    context
-        .read<AnalyticsCubit>()
-        .watchStartupAnalytics(widget.user.uid);
+    context.read<AnalyticsCubit>().watchStartupAnalytics(widget.user.uid);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Startup Analytics'),
-      ),
+      appBar: AppBar(title: const Text('Startup Analytics')),
       body: BlocConsumer<AnalyticsCubit, AnalyticsState>(
         listener: (context, state) {
           if (state is AnalyticsFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-              ),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
-          if (state is AnalyticsInitial ||
-              state is AnalyticsLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+          if (state is AnalyticsInitial || state is AnalyticsLoading) {
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (state is AnalyticsFailure) {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(28),
-                child: Text(
-                  state.message,
-                  textAlign: TextAlign.center,
-                ),
+                child: Text(state.message, textAlign: TextAlign.center),
               ),
             );
           }
 
           if (state is AnalyticsLoaded) {
-            return _AnalyticsContent(
-              analytics: state.analytics,
-            );
+            return _AnalyticsContent(analytics: state.analytics);
           }
 
           return const SizedBox.shrink();
@@ -83,19 +64,12 @@ class _StartupAnalyticsScreenState
 class _AnalyticsContent extends StatelessWidget {
   final StartupAnalytics analytics;
 
-  const _AnalyticsContent({
-    required this.analytics,
-  });
+  const _AnalyticsContent({required this.analytics});
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        20,
-        18,
-        20,
-        36,
-      ),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 36),
       children: [
         const Text(
           'Live venture performance',
@@ -108,23 +82,17 @@ class _AnalyticsContent extends StatelessWidget {
         const SizedBox(height: 8),
         const Text(
           'Understand how students are engaging with your opportunities and moving through the recruitment pipeline.',
-          style: TextStyle(
-            height: 1.5,
-            color: AppTheme.textSecondary,
-          ),
+          style: TextStyle(height: 1.5, color: AppTheme.textSecondary),
         ),
         const SizedBox(height: 24),
 
-        _HeroAnalyticsCard(
-          analytics: analytics,
-        ),
+        _HeroAnalyticsCard(analytics: analytics),
 
         const SizedBox(height: 20),
 
         LayoutBuilder(
           builder: (context, constraints) {
-            final itemWidth =
-                (constraints.maxWidth - 12) / 2;
+            final itemWidth = (constraints.maxWidth - 12) / 2;
 
             return Wrap(
               spacing: 12,
@@ -135,8 +103,7 @@ class _AnalyticsContent extends StatelessWidget {
                   child: _MetricCard(
                     title: 'Opportunities',
                     value: analytics.totalOpportunities,
-                    subtitle:
-                        '${analytics.openOpportunities} open',
+                    subtitle: '${analytics.openOpportunities} open',
                     icon: Icons.work_outline,
                   ),
                 ),
@@ -145,8 +112,7 @@ class _AnalyticsContent extends StatelessWidget {
                   child: _MetricCard(
                     title: 'Applications',
                     value: analytics.totalApplications,
-                    subtitle:
-                        '${analytics.activePipeline} active',
+                    subtitle: '${analytics.activePipeline} active',
                     icon: Icons.groups_outlined,
                   ),
                 ),
@@ -185,9 +151,7 @@ class _AnalyticsContent extends StatelessWidget {
 
         const SizedBox(height: 16),
 
-        _PipelineCard(
-          analytics: analytics,
-        ),
+        _PipelineCard(analytics: analytics),
 
         const SizedBox(height: 28),
 
@@ -203,9 +167,8 @@ class _AnalyticsContent extends StatelessWidget {
           const _EmptyPerformanceState()
         else
           ...analytics.opportunityPerformance.map(
-            (performance) => _OpportunityPerformanceCard(
-              performance: performance,
-            ),
+            (performance) =>
+                _OpportunityPerformanceCard(performance: performance),
           ),
       ],
     );
@@ -215,9 +178,7 @@ class _AnalyticsContent extends StatelessWidget {
 class _HeroAnalyticsCard extends StatelessWidget {
   final StartupAnalytics analytics;
 
-  const _HeroAnalyticsCard({
-    required this.analytics,
-  });
+  const _HeroAnalyticsCard({required this.analytics});
 
   @override
   Widget build(BuildContext context) {
@@ -232,11 +193,7 @@ class _HeroAnalyticsCard extends StatelessWidget {
         children: [
           const Row(
             children: [
-              Icon(
-                Icons.insights_outlined,
-                color: AppTheme.gold,
-                size: 30,
-              ),
+              Icon(Icons.insights_outlined, color: AppTheme.gold, size: 30),
               SizedBox(width: 10),
               Text(
                 'Recruitment overview',
@@ -257,16 +214,11 @@ class _HeroAnalyticsCard extends StatelessWidget {
                   value: analytics.totalApplications.toString(),
                 ),
               ),
-              Container(
-                width: 1,
-                height: 54,
-                color: Colors.white24,
-              ),
+              Container(width: 1, height: 54, color: Colors.white24),
               Expanded(
                 child: _HeroValue(
                   label: 'Acceptance rate',
-                  value:
-                      '${analytics.acceptanceRate.toStringAsFixed(0)}%',
+                  value: '${analytics.acceptanceRate.toStringAsFixed(0)}%',
                 ),
               ),
             ],
@@ -291,10 +243,7 @@ class _HeroValue extends StatelessWidget {
   final String label;
   final String value;
 
-  const _HeroValue({
-    required this.label,
-    required this.value,
-  });
+  const _HeroValue({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -312,10 +261,7 @@ class _HeroValue extends StatelessWidget {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 12,
-          ),
+          style: const TextStyle(color: Colors.white70, fontSize: 12),
         ),
       ],
     );
@@ -342,9 +288,7 @@ class _MetricCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(21),
-        border: Border.all(
-          color: const Color(0xFFE4E7EC),
-        ),
+        border: Border.all(color: const Color(0xFFE4E7EC)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,11 +301,7 @@ class _MetricCard extends StatelessWidget {
               color: const Color(0xFFF1EDFF),
               borderRadius: BorderRadius.circular(13),
             ),
-            child: Icon(
-              icon,
-              color: AppTheme.purple,
-              size: 21,
-            ),
+            child: Icon(icon, color: AppTheme.purple, size: 21),
           ),
           const SizedBox(height: 16),
           Text(
@@ -383,10 +323,7 @@ class _MetricCard extends StatelessWidget {
           const SizedBox(height: 3),
           Text(
             subtitle,
-            style: const TextStyle(
-              color: AppTheme.textSecondary,
-              fontSize: 12,
-            ),
+            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
           ),
         ],
       ),
@@ -397,25 +334,20 @@ class _MetricCard extends StatelessWidget {
 class _PipelineCard extends StatelessWidget {
   final StartupAnalytics analytics;
 
-  const _PipelineCard({
-    required this.analytics,
-  });
+  const _PipelineCard({required this.analytics});
 
   @override
   Widget build(BuildContext context) {
-    final maximum =
-        analytics.totalApplications == 0
-            ? 1
-            : analytics.totalApplications;
+    final maximum = analytics.totalApplications == 0
+        ? 1
+        : analytics.totalApplications;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: const Color(0xFFE4E7EC),
-        ),
+        border: Border.all(color: const Color(0xFFE4E7EC)),
       ),
       child: Column(
         children: [
@@ -479,9 +411,7 @@ class _PipelineBar extends StatelessWidget {
     final fraction = value / maximum;
 
     return Padding(
-      padding: EdgeInsets.only(
-        bottom: showBottomSpacing ? 18 : 0,
-      ),
+      padding: EdgeInsets.only(bottom: showBottomSpacing ? 18 : 0),
       child: Column(
         children: [
           Row(
@@ -523,9 +453,7 @@ class _PipelineBar extends StatelessWidget {
 class _OpportunityPerformanceCard extends StatelessWidget {
   final OpportunityPerformance performance;
 
-  const _OpportunityPerformanceCard({
-    required this.performance,
-  });
+  const _OpportunityPerformanceCard({required this.performance});
 
   @override
   Widget build(BuildContext context) {
@@ -537,9 +465,7 @@ class _OpportunityPerformanceCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(21),
-        border: Border.all(
-          color: const Color(0xFFE4E7EC),
-        ),
+        border: Border.all(color: const Color(0xFFE4E7EC)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -553,10 +479,7 @@ class _OpportunityPerformanceCard extends StatelessWidget {
                   color: AppTheme.navy,
                   borderRadius: BorderRadius.circular(13),
                 ),
-                child: const Icon(
-                  Icons.work_outline,
-                  color: AppTheme.gold,
-                ),
+                child: const Icon(Icons.work_outline, color: AppTheme.gold),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -622,10 +545,7 @@ class _OpportunityPerformanceCard extends StatelessWidget {
               const Expanded(
                 child: Text(
                   'Role acceptance rate',
-                  style: TextStyle(
-                    color: AppTheme.textSecondary,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                 ),
               ),
               Text(
@@ -657,10 +577,7 @@ class _PerformanceValue extends StatelessWidget {
   final String label;
   final int value;
 
-  const _PerformanceValue({
-    required this.label,
-    required this.value,
-  });
+  const _PerformanceValue({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -678,10 +595,7 @@ class _PerformanceValue extends StatelessWidget {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: AppTheme.textSecondary,
-            fontSize: 11,
-          ),
+          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
         ),
       ],
     );
@@ -692,10 +606,7 @@ class _SectionHeading extends StatelessWidget {
   final String title;
   final String subtitle;
 
-  const _SectionHeading({
-    required this.title,
-    required this.subtitle,
-  });
+  const _SectionHeading({required this.title, required this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -713,10 +624,7 @@ class _SectionHeading extends StatelessWidget {
         const SizedBox(height: 5),
         Text(
           subtitle,
-          style: const TextStyle(
-            color: AppTheme.textSecondary,
-            height: 1.45,
-          ),
+          style: const TextStyle(color: AppTheme.textSecondary, height: 1.45),
         ),
       ],
     );
@@ -733,17 +641,11 @@ class _EmptyPerformanceState extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(21),
-        border: Border.all(
-          color: const Color(0xFFE4E7EC),
-        ),
+        border: Border.all(color: const Color(0xFFE4E7EC)),
       ),
       child: const Column(
         children: [
-          Icon(
-            Icons.insights_outlined,
-            size: 48,
-            color: AppTheme.purple,
-          ),
+          Icon(Icons.insights_outlined, size: 48, color: AppTheme.purple),
           SizedBox(height: 14),
           Text(
             'No performance data yet',
@@ -757,10 +659,7 @@ class _EmptyPerformanceState extends StatelessWidget {
           Text(
             'Publish an opportunity to begin collecting recruitment analytics.',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppTheme.textSecondary,
-              height: 1.5,
-            ),
+            style: TextStyle(color: AppTheme.textSecondary, height: 1.5),
           ),
         ],
       ),

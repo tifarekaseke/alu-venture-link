@@ -23,8 +23,7 @@ class StudentProfileScreen extends StatelessWidget {
           user.githubUrl.trim().isNotEmpty,
     ];
 
-    final completed =
-        checks.where((check) => check).length;
+    final completed = checks.where((check) => check).length;
 
     return ((completed / checks.length) * 100).round();
   }
@@ -44,19 +43,13 @@ class StudentProfileScreen extends StatelessWidget {
       return parts.first.substring(0, 1).toUpperCase();
     }
 
-    return '${parts.first[0]}${parts.last[0]}'
-        .toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
 
-  void _openEditor(
-    BuildContext context,
-    AppUser user,
-  ) {
+  void _openEditor(BuildContext context, AppUser user) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => EditStudentProfileScreen(
-          user: user,
-        ),
+        builder: (_) => EditStudentProfileScreen(user: user),
       ),
     );
   }
@@ -67,9 +60,7 @@ class StudentProfileScreen extends StatelessWidget {
       builder: (context, state) {
         if (state is! AuthAuthenticated) {
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -90,12 +81,7 @@ class StudentProfileScreen extends StatelessWidget {
             ],
           ),
           body: ListView(
-            padding: const EdgeInsets.fromLTRB(
-              24,
-              16,
-              24,
-              32,
-            ),
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
             children: [
               Center(
                 child: CircleAvatar(
@@ -123,21 +109,15 @@ class StudentProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               Text(
-                user.program.isEmpty
-                    ? 'Program not added'
-                    : user.program,
+                user.program.isEmpty ? 'Program not added' : user.program,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: AppTheme.textSecondary,
-                ),
+                style: const TextStyle(color: AppTheme.textSecondary),
               ),
               const SizedBox(height: 4),
               Text(
                 user.campus,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: AppTheme.textSecondary,
-                ),
+                style: const TextStyle(color: AppTheme.textSecondary),
               ),
               const SizedBox(height: 26),
 
@@ -146,13 +126,10 @@ class StudentProfileScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(22),
-                  border: Border.all(
-                    color: const Color(0xFFE4E7EC),
-                  ),
+                  border: Border.all(color: const Color(0xFFE4E7EC)),
                 ),
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -179,8 +156,7 @@ class StudentProfileScreen extends StatelessWidget {
                     LinearProgressIndicator(
                       value: completion / 100,
                       minHeight: 9,
-                      borderRadius:
-                          BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -218,9 +194,7 @@ class StudentProfileScreen extends StatelessWidget {
                 child: user.skills.isEmpty
                     ? const Text(
                         'No skills added yet.',
-                        style: TextStyle(
-                          color: AppTheme.textSecondary,
-                        ),
+                        style: TextStyle(color: AppTheme.textSecondary),
                       )
                     : Wrap(
                         spacing: 8,
@@ -230,8 +204,7 @@ class StudentProfileScreen extends StatelessWidget {
                               (skill) => Chip(
                                 label: Text(skill),
                                 side: BorderSide.none,
-                                backgroundColor:
-                                    const Color(0xFFFFF7D6),
+                                backgroundColor: const Color(0xFFFFF7D6),
                               ),
                             )
                             .toList(),
@@ -264,8 +237,7 @@ class StudentProfileScreen extends StatelessWidget {
                     ),
                     const Divider(),
                     _InformationRow(
-                      icon:
-                          Icons.business_center_outlined,
+                      icon: Icons.business_center_outlined,
                       label: user.linkedInUrl.isEmpty
                           ? 'LinkedIn not added'
                           : user.linkedInUrl,
@@ -298,8 +270,7 @@ class StudentProfileScreen extends StatelessWidget {
                   context.read<AuthCubit>().signOut();
                 },
                 style: OutlinedButton.styleFrom(
-                  minimumSize:
-                      const Size(double.infinity, 54),
+                  minimumSize: const Size(double.infinity, 54),
                 ),
                 icon: const Icon(Icons.logout),
                 label: const Text('Sign out'),
@@ -316,10 +287,7 @@ class _ProfileSection extends StatelessWidget {
   final String title;
   final Widget child;
 
-  const _ProfileSection({
-    required this.title,
-    required this.child,
-  });
+  const _ProfileSection({required this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -329,9 +297,7 @@ class _ProfileSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: const Color(0xFFE4E7EC),
-        ),
+        border: Border.all(color: const Color(0xFFE4E7EC)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,29 +322,19 @@ class _InformationRow extends StatelessWidget {
   final IconData icon;
   final String label;
 
-  const _InformationRow({
-    required this.icon,
-    required this.label,
-  });
+  const _InformationRow({required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          color: AppTheme.purple,
-          size: 21,
-        ),
+        Icon(icon, color: AppTheme.purple, size: 21),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(
-              height: 1.45,
-              color: AppTheme.textSecondary,
-            ),
+            style: const TextStyle(height: 1.45, color: AppTheme.textSecondary),
           ),
         ),
       ],

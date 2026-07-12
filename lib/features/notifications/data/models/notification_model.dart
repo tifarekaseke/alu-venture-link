@@ -39,22 +39,20 @@ class AppNotification extends Equatable {
       type: data['type'] as String? ?? 'general',
       referenceId: data['referenceId'] as String? ?? '',
       isRead: data['isRead'] as bool? ?? false,
-      createdAt: rawCreatedAt is Timestamp
-          ? rawCreatedAt.toDate()
-          : null,
+      createdAt: rawCreatedAt is Timestamp ? rawCreatedAt.toDate() : null,
     );
   }
 
   @override
   List<Object?> get props => [
-        id,
-        recipientId,
-        senderId,
-        title,
-        message,
-        type,
-        referenceId,
-        isRead,
-        createdAt,
-      ];
+    id,
+    recipientId,
+    senderId,
+    title,
+    message,
+    type,
+    referenceId,
+    isRead,
+    createdAt,
+  ];
 }

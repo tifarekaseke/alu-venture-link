@@ -12,11 +12,9 @@ class StartupCubit extends Cubit<StartupState> {
   final StartupRepository _startupRepository;
 
   StreamSubscription<StartupProfileModel?>? _profileSubscription;
-  StreamSubscription<List<StartupProfileModel>>?
-      _profilesSubscription;
+  StreamSubscription<List<StartupProfileModel>>? _profilesSubscription;
 
-  StartupCubit(this._startupRepository)
-      : super(const StartupInitial());
+  StartupCubit(this._startupRepository) : super(const StartupInitial());
 
   void watchStartupProfile(String ownerId) {
     emit(const StartupLoading());
@@ -24,20 +22,21 @@ class StartupCubit extends Cubit<StartupState> {
     _profilesSubscription?.cancel();
     _profileSubscription?.cancel();
 
-    _profileSubscription =
-        _startupRepository.watchStartupProfile(ownerId).listen(
-      (profile) {
-        if (profile == null) {
-          emit(const StartupProfileMissing());
-          return;
-        }
+    _profileSubscription = _startupRepository
+        .watchStartupProfile(ownerId)
+        .listen(
+          (profile) {
+            if (profile == null) {
+              emit(const StartupProfileMissing());
+              return;
+            }
 
-        emit(StartupProfileLoaded(profile));
-      },
-      onError: (Object error) {
-        emit(StartupFailure(_friendlyError(error)));
-      },
-    );
+            emit(StartupProfileLoaded(profile));
+          },
+          onError: (Object error) {
+            emit(StartupFailure(_friendlyError(error)));
+          },
+        );
   }
 
   void watchPendingProfiles() {
@@ -46,8 +45,7 @@ class StartupCubit extends Cubit<StartupState> {
     _profileSubscription?.cancel();
     _profilesSubscription?.cancel();
 
-    _profilesSubscription =
-        _startupRepository.watchPendingProfiles().listen(
+    _profilesSubscription = _startupRepository.watchPendingProfiles().listen(
       (profiles) {
         emit(StartupProfilesLoaded(profiles));
       },

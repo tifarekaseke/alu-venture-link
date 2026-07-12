@@ -42,10 +42,7 @@ class AppUser extends Equatable {
 
   bool get isAdmin => role == 'admin';
 
-  factory AppUser.fromMap(
-    String documentId,
-    Map<String, dynamic> map,
-  ) {
+  factory AppUser.fromMap(String documentId, Map<String, dynamic> map) {
     final rawSkills = map['skills'];
     final rawCreatedAt = map['createdAt'];
     final rawAvailability = map['availabilityHours'];
@@ -65,13 +62,9 @@ class AppUser extends Equatable {
       portfolioUrl: map['portfolioUrl'] as String? ?? '',
       linkedInUrl: map['linkedInUrl'] as String? ?? '',
       githubUrl: map['githubUrl'] as String? ?? '',
-      availabilityHours:
-          rawAvailability is num ? rawAvailability.toInt() : 0,
-      profileCompleted:
-          map['profileCompleted'] as bool? ?? false,
-      createdAt: rawCreatedAt is Timestamp
-          ? rawCreatedAt.toDate()
-          : null,
+      availabilityHours: rawAvailability is num ? rawAvailability.toInt() : 0,
+      profileCompleted: map['profileCompleted'] as bool? ?? false,
+      createdAt: rawCreatedAt is Timestamp ? rawCreatedAt.toDate() : null,
     );
   }
 
@@ -117,36 +110,33 @@ class AppUser extends Equatable {
       campus: campus ?? this.campus,
       program: program ?? this.program,
       skills: skills ?? this.skills,
-      profileImageUrl:
-          profileImageUrl ?? this.profileImageUrl,
+      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
       bio: bio ?? this.bio,
       portfolioUrl: portfolioUrl ?? this.portfolioUrl,
       linkedInUrl: linkedInUrl ?? this.linkedInUrl,
       githubUrl: githubUrl ?? this.githubUrl,
-      availabilityHours:
-          availabilityHours ?? this.availabilityHours,
-      profileCompleted:
-          profileCompleted ?? this.profileCompleted,
+      availabilityHours: availabilityHours ?? this.availabilityHours,
+      profileCompleted: profileCompleted ?? this.profileCompleted,
       createdAt: createdAt,
     );
   }
 
   @override
   List<Object?> get props => [
-        uid,
-        fullName,
-        email,
-        role,
-        campus,
-        program,
-        skills,
-        profileImageUrl,
-        bio,
-        portfolioUrl,
-        linkedInUrl,
-        githubUrl,
-        availabilityHours,
-        profileCompleted,
-        createdAt,
-      ];
+    uid,
+    fullName,
+    email,
+    role,
+    campus,
+    program,
+    skills,
+    profileImageUrl,
+    bio,
+    portfolioUrl,
+    linkedInUrl,
+    githubUrl,
+    availabilityHours,
+    profileCompleted,
+    createdAt,
+  ];
 }

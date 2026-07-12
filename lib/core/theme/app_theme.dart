@@ -11,15 +11,16 @@ class AppTheme {
   static const Color textSecondary = Color(0xFF667085);
 
   static ThemeData get lightTheme {
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: navy,
-      brightness: Brightness.light,
-    ).copyWith(
-      primary: navy,
-      secondary: gold,
-      tertiary: purple,
-      surface: Colors.white,
-    );
+    final colorScheme =
+        ColorScheme.fromSeed(
+          seedColor: navy,
+          brightness: Brightness.light,
+        ).copyWith(
+          primary: navy,
+          secondary: gold,
+          tertiary: purple,
+          surface: Colors.white,
+        );
 
     return ThemeData(
       useMaterial3: true,
@@ -40,22 +41,15 @@ class AppTheme {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(
-            color: Color(0xFFE4E7EC),
-          ),
+          borderSide: const BorderSide(color: Color(0xFFE4E7EC)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(
-            color: Color(0xFFE4E7EC),
-          ),
+          borderSide: const BorderSide(color: Color(0xFFE4E7EC)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(
-            color: purple,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: purple, width: 1.5),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -66,10 +60,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
     );

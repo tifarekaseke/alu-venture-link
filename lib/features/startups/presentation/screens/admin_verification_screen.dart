@@ -11,18 +11,14 @@ import '../cubit/startup_state.dart';
 class AdminVerificationScreen extends StatefulWidget {
   final AppUser user;
 
-  const AdminVerificationScreen({
-    required this.user,
-    super.key,
-  });
+  const AdminVerificationScreen({required this.user, super.key});
 
   @override
   State<AdminVerificationScreen> createState() =>
       _AdminVerificationScreenState();
 }
 
-class _AdminVerificationScreenState
-    extends State<AdminVerificationScreen> {
+class _AdminVerificationScreenState extends State<AdminVerificationScreen> {
   @override
   void initState() {
     super.initState();
@@ -30,31 +26,22 @@ class _AdminVerificationScreenState
     context.read<StartupCubit>().watchPendingProfiles();
   }
 
-  Future<void> _approve(
-    StartupProfileModel profile,
-  ) async {
-    final success =
-        await context.read<StartupCubit>().approveProfile(
-              profileId: profile.id,
-              adminId: widget.user.uid,
-            );
+  Future<void> _approve(StartupProfileModel profile) async {
+    final success = await context.read<StartupCubit>().approveProfile(
+      profileId: profile.id,
+      adminId: widget.user.uid,
+    );
 
     if (!mounted || !success) {
       return;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${profile.startupName} has been approved.',
-        ),
-      ),
+      SnackBar(content: Text('${profile.startupName} has been approved.')),
     );
   }
 
-  Future<void> _reject(
-    StartupProfileModel profile,
-  ) async {
+  Future<void> _reject(StartupProfileModel profile) async {
     final controller = TextEditingController();
 
     final reason = await showDialog<String>(
@@ -68,8 +55,7 @@ class _AdminVerificationScreenState
             maxLines: 5,
             decoration: const InputDecoration(
               labelText: 'Reason',
-              hintText:
-                  'Explain what the startup must correct.',
+              hintText: 'Explain what the startup must correct.',
               alignLabelWithHint: true,
             ),
           ),
@@ -103,23 +89,18 @@ class _AdminVerificationScreenState
       return;
     }
 
-    final success =
-        await context.read<StartupCubit>().rejectProfile(
-              profileId: profile.id,
-              adminId: widget.user.uid,
-              reason: reason,
-            );
+    final success = await context.read<StartupCubit>().rejectProfile(
+      profileId: profile.id,
+      adminId: widget.user.uid,
+      reason: reason,
+    );
 
     if (!mounted || !success) {
       return;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${profile.startupName} has been rejected.',
-        ),
-      ),
+      SnackBar(content: Text('${profile.startupName} has been rejected.')),
     );
   }
 
@@ -141,32 +122,23 @@ class _AdminVerificationScreenState
       body: BlocConsumer<StartupCubit, StartupState>(
         listener: (context, state) {
           if (state is StartupFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
-          if (state is StartupLoading ||
-              state is StartupInitial) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+          if (state is StartupLoading || state is StartupInitial) {
+            return const Center(child: CircularProgressIndicator());
           }
 
-          if (state is StartupProfilesLoaded &&
-              state.profiles.isEmpty) {
+          if (state is StartupProfilesLoaded && state.profiles.isEmpty) {
             return const _EmptyVerificationState();
           }
 
           if (state is StartupProfilesLoaded) {
             return ListView(
-              padding: const EdgeInsets.fromLTRB(
-                24,
-                18,
-                24,
-                32,
-              ),
+              padding: const EdgeInsets.fromLTRB(24, 18, 24, 32),
               children: [
                 const Text(
                   'Pending verification',
@@ -179,10 +151,7 @@ class _AdminVerificationScreenState
                 const SizedBox(height: 8),
                 const Text(
                   'Review whether each venture is recognized within the ALU ecosystem.',
-                  style: TextStyle(
-                    height: 1.5,
-                    color: AppTheme.textSecondary,
-                  ),
+                  style: TextStyle(height: 1.5, color: AppTheme.textSecondary),
                 ),
                 const SizedBox(height: 24),
                 ...state.profiles.map(
@@ -200,10 +169,7 @@ class _AdminVerificationScreenState
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(28),
-                child: Text(
-                  state.message,
-                  textAlign: TextAlign.center,
-                ),
+                child: Text(state.message, textAlign: TextAlign.center),
               ),
             );
           }
@@ -233,9 +199,7 @@ class _VerificationCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 18),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(22),
-        side: const BorderSide(
-          color: Color(0xFFE4E7EC),
-        ),
+        side: const BorderSide(color: Color(0xFFE4E7EC)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -259,8 +223,7 @@ class _VerificationCard extends StatelessWidget {
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         profile.startupName,
@@ -272,17 +235,12 @@ class _VerificationCard extends StatelessWidget {
                       ),
                       Text(
                         '${profile.industry} • ${profile.ventureStage}',
-                        style: const TextStyle(
-                          color: AppTheme.textSecondary,
-                        ),
+                        style: const TextStyle(color: AppTheme.textSecondary),
                       ),
                     ],
                   ),
                 ),
-                const Chip(
-                  label: Text('Pending'),
-                  side: BorderSide.none,
-                ),
+                const Chip(label: Text('Pending'), side: BorderSide.none),
               ],
             ),
             const SizedBox(height: 16),
@@ -296,22 +254,12 @@ class _VerificationCard extends StatelessWidget {
             const SizedBox(height: 16),
             _Detail(
               label: 'Founder',
-              value:
-                  '${profile.ownerName} (${profile.ownerEmail})',
+              value: '${profile.ownerName} (${profile.ownerEmail})',
             ),
-            _Detail(
-              label: 'Recognition',
-              value: profile.recognitionType,
-            ),
-            _Detail(
-              label: 'Reference',
-              value: profile.recognitionReference,
-            ),
+            _Detail(label: 'Recognition', value: profile.recognitionType),
+            _Detail(label: 'Reference', value: profile.recognitionReference),
             if (profile.website.isNotEmpty)
-              _Detail(
-                label: 'Website',
-                value: profile.website,
-              ),
+              _Detail(label: 'Website', value: profile.website),
             const SizedBox(height: 18),
             Row(
               children: [
@@ -342,10 +290,7 @@ class _Detail extends StatelessWidget {
   final String label;
   final String value;
 
-  const _Detail({
-    required this.label,
-    required this.value,
-  });
+  const _Detail({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -363,9 +308,7 @@ class _Detail extends StatelessWidget {
             ),
             TextSpan(
               text: value,
-              style: const TextStyle(
-                color: AppTheme.textSecondary,
-              ),
+              style: const TextStyle(color: AppTheme.textSecondary),
             ),
           ],
         ),
@@ -403,10 +346,7 @@ class _EmptyVerificationState extends StatelessWidget {
             Text(
               'New startup verification requests will appear here.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                height: 1.5,
-                color: AppTheme.textSecondary,
-              ),
+              style: TextStyle(height: 1.5, color: AppTheme.textSecondary),
             ),
           ],
         ),

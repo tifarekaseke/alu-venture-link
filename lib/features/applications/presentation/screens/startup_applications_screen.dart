@@ -9,22 +9,17 @@ import '../cubit/application_cubit.dart';
 import '../cubit/application_state.dart';
 import 'schedule_interview_screen.dart';
 
-class StartupApplicationsScreen
-    extends StatefulWidget {
+class StartupApplicationsScreen extends StatefulWidget {
   final AppUser user;
 
-  const StartupApplicationsScreen({
-    required this.user,
-    super.key,
-  });
+  const StartupApplicationsScreen({required this.user, super.key});
 
   @override
   State<StartupApplicationsScreen> createState() =>
       _StartupApplicationsScreenState();
 }
 
-class _StartupApplicationsScreenState
-    extends State<StartupApplicationsScreen> {
+class _StartupApplicationsScreenState extends State<StartupApplicationsScreen> {
   String _selectedStatus = 'All';
 
   final _statuses = const [
@@ -42,11 +37,7 @@ class _StartupApplicationsScreenState
   void initState() {
     super.initState();
 
-    context
-        .read<ApplicationCubit>()
-        .watchStartupApplications(
-          widget.user.uid,
-        );
+    context.read<ApplicationCubit>().watchStartupApplications(widget.user.uid);
   }
 
   List<ApplicationModel> _filteredApplications(
@@ -57,8 +48,7 @@ class _StartupApplicationsScreenState
     }
 
     return applications.where((application) {
-      return application.status ==
-          _selectedStatus;
+      return application.status == _selectedStatus;
     }).toList();
   }
 
@@ -68,10 +58,7 @@ class _StartupApplicationsScreenState
   }) async {
     final success = await context
         .read<ApplicationCubit>()
-        .updateApplicationStatus(
-          applicationId: application.id,
-          status: status,
-        );
+        .updateApplicationStatus(applicationId: application.id, status: status);
 
     if (!mounted || !success) {
       return;
@@ -86,15 +73,10 @@ class _StartupApplicationsScreenState
     );
   }
 
-  Future<void> _scheduleInterview(
-    ApplicationModel application,
-  ) async {
+  Future<void> _scheduleInterview(ApplicationModel application) async {
     await Navigator.of(context).push<bool>(
       MaterialPageRoute<bool>(
-        builder: (_) =>
-            ScheduleInterviewScreen(
-          application: application,
-        ),
+        builder: (_) => ScheduleInterviewScreen(application: application),
       ),
     );
   }
@@ -120,66 +102,40 @@ class _StartupApplicationsScreenState
     }
   }
 
-  int _countStatus(
-    List<ApplicationModel> applications,
-    String status,
-  ) {
+  int _countStatus(List<ApplicationModel> applications, String status) {
     return applications
-        .where(
-          (application) =>
-              application.status == status,
-        )
+        .where((application) => application.status == status)
         .length;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Applicants'),
-      ),
-      body: BlocConsumer<
-          ApplicationCubit,
-          ApplicationState>(
+      appBar: AppBar(title: const Text('Applicants')),
+      body: BlocConsumer<ApplicationCubit, ApplicationState>(
         listener: (context, state) {
           if (state is ApplicationFailure) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-              ),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
-          if (state is ApplicationLoading ||
-              state is ApplicationInitial) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+          if (state is ApplicationLoading || state is ApplicationInitial) {
+            return const Center(child: CircularProgressIndicator());
           }
 
-          if (state is ApplicationLoaded &&
-              state.applications.isEmpty) {
+          if (state is ApplicationLoaded && state.applications.isEmpty) {
             return const _EmptyApplicantState();
           }
 
           if (state is ApplicationLoaded) {
-            final applications =
-                state.applications;
+            final applications = state.applications;
 
-            final filtered =
-                _filteredApplications(
-              applications,
-            );
+            final filtered = _filteredApplications(applications);
 
             return ListView(
-              padding: const EdgeInsets.fromLTRB(
-                20,
-                18,
-                20,
-                32,
-              ),
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 32),
               children: [
                 const Text(
                   'Candidate pipeline',
@@ -192,10 +148,7 @@ class _StartupApplicationsScreenState
                 const SizedBox(height: 8),
                 const Text(
                   'Review applicants, move them through the selection process, and schedule interviews.',
-                  style: TextStyle(
-                    height: 1.5,
-                    color: AppTheme.textSecondary,
-                  ),
+                  style: TextStyle(height: 1.5, color: AppTheme.textSecondary),
                 ),
                 const SizedBox(height: 22),
 
@@ -205,37 +158,23 @@ class _StartupApplicationsScreenState
                   children: [
                     _MetricCard(
                       label: 'Total',
-                      value:
-                          applications.length,
-                      icon:
-                          Icons.groups_outlined,
+                      value: applications.length,
+                      icon: Icons.groups_outlined,
                     ),
                     _MetricCard(
                       label: 'Review',
-                      value: _countStatus(
-                        applications,
-                        'underReview',
-                      ),
-                      icon:
-                          Icons.visibility_outlined,
+                      value: _countStatus(applications, 'underReview'),
+                      icon: Icons.visibility_outlined,
                     ),
                     _MetricCard(
                       label: 'Interview',
-                      value: _countStatus(
-                        applications,
-                        'interview',
-                      ),
-                      icon:
-                          Icons.video_call_outlined,
+                      value: _countStatus(applications, 'interview'),
+                      icon: Icons.video_call_outlined,
                     ),
                     _MetricCard(
                       label: 'Accepted',
-                      value: _countStatus(
-                        applications,
-                        'accepted',
-                      ),
-                      icon:
-                          Icons.check_circle_outline,
+                      value: _countStatus(applications, 'accepted'),
+                      icon: Icons.check_circle_outline,
                     ),
                   ],
                 ),
@@ -244,12 +183,9 @@ class _StartupApplicationsScreenState
 
                 DropdownButtonFormField<String>(
                   initialValue: _selectedStatus,
-                  decoration:
-                      const InputDecoration(
-                    labelText:
-                        'Filter by status',
-                    prefixIcon:
-                        Icon(Icons.filter_list),
+                  decoration: const InputDecoration(
+                    labelText: 'Filter by status',
+                    prefixIcon: Icon(Icons.filter_list),
                   ),
                   items: _statuses.map((status) {
                     return DropdownMenuItem<String>(
@@ -278,25 +214,14 @@ class _StartupApplicationsScreenState
                   const _NoFilteredApplicants()
                 else
                   ...filtered.map(
-                    (application) =>
-                        _ApplicantCard(
+                    (application) => _ApplicantCard(
                       application: application,
-                      statusLabel:
-                          _statusLabel(
-                        application.status,
-                      ),
-                      onStatusChanged:
-                          (status) {
-                        _changeStatus(
-                          application:
-                              application,
-                          status: status,
-                        );
+                      statusLabel: _statusLabel(application.status),
+                      onStatusChanged: (status) {
+                        _changeStatus(application: application, status: status);
                       },
                       onScheduleInterview: () {
-                        _scheduleInterview(
-                          application,
-                        );
+                        _scheduleInterview(application);
                       },
                     ),
                   ),
@@ -307,13 +232,8 @@ class _StartupApplicationsScreenState
           if (state is ApplicationFailure) {
             return Center(
               child: Padding(
-                padding:
-                    const EdgeInsets.all(28),
-                child: Text(
-                  state.message,
-                  textAlign:
-                      TextAlign.center,
-                ),
+                padding: const EdgeInsets.all(28),
+                child: Text(state.message, textAlign: TextAlign.center),
               ),
             );
           }
@@ -340,92 +260,66 @@ class _ApplicantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final submittedText =
-        application.submittedAt == null
-            ? 'Recently'
-            : DateFormat('dd MMM yyyy')
-                .format(
-                  application.submittedAt!,
-                );
+    final submittedText = application.submittedAt == null
+        ? 'Recently'
+        : DateFormat('dd MMM yyyy').format(application.submittedAt!);
 
     return Card(
       elevation: 0,
-      margin: const EdgeInsets.only(
-        bottom: 16,
-      ),
+      margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.circular(22),
-        side: const BorderSide(
-          color: Color(0xFFE4E7EC),
-        ),
+        borderRadius: BorderRadius.circular(22),
+        side: const BorderSide(color: Color(0xFFE4E7EC)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CircleAvatar(
                   radius: 25,
-                  backgroundColor:
-                      AppTheme.navy,
+                  backgroundColor: AppTheme.navy,
                   child: Text(
-                    _initials(
-                      application.studentName,
-                    ),
+                    _initials(application.studentName),
                     style: const TextStyle(
                       color: AppTheme.gold,
-                      fontWeight:
-                          FontWeight.w800,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         application.studentName,
                         style: const TextStyle(
                           fontSize: 18,
-                          fontWeight:
-                              FontWeight.w800,
+                          fontWeight: FontWeight.w800,
                           color: AppTheme.navy,
                         ),
                       ),
                       const SizedBox(height: 3),
                       Text(
                         application.studentEmail,
-                        style: const TextStyle(
-                          color:
-                              AppTheme.textSecondary,
-                        ),
+                        style: const TextStyle(color: AppTheme.textSecondary),
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        application
-                            .opportunityTitle,
+                        application.opportunityTitle,
                         style: const TextStyle(
-                          fontWeight:
-                              FontWeight.w700,
+                          fontWeight: FontWeight.w700,
                           color: AppTheme.purple,
                         ),
                       ),
                     ],
                   ),
                 ),
-                _StatusChip(
-                  status:
-                      application.status,
-                  label: statusLabel,
-                ),
+                _StatusChip(status: application.status, label: statusLabel),
               ],
             ),
 
@@ -436,12 +330,10 @@ class _ApplicantCard extends StatelessWidget {
                   ? 'No cover letter was provided.'
                   : application.coverLetter,
               maxLines: 5,
-              overflow:
-                  TextOverflow.ellipsis,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 height: 1.5,
-                color:
-                    AppTheme.textSecondary,
+                color: AppTheme.textSecondary,
               ),
             ),
 
@@ -452,16 +344,14 @@ class _ApplicantCard extends StatelessWidget {
                 const Icon(
                   Icons.calendar_today_outlined,
                   size: 16,
-                  color:
-                      AppTheme.textSecondary,
+                  color: AppTheme.textSecondary,
                 ),
                 const SizedBox(width: 7),
                 Text(
                   'Applied $submittedText',
                   style: const TextStyle(
                     fontSize: 13,
-                    color:
-                        AppTheme.textSecondary,
+                    color: AppTheme.textSecondary,
                   ),
                 ),
               ],
@@ -469,9 +359,7 @@ class _ApplicantCard extends StatelessWidget {
 
             if (application.hasInterview) ...[
               const SizedBox(height: 16),
-              _InterviewSummary(
-                application: application,
-              ),
+              _InterviewSummary(application: application),
             ],
 
             const SizedBox(height: 18),
@@ -481,17 +369,12 @@ class _ApplicantCard extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed:
-                        application.status ==
-                                    'accepted' ||
-                                application.status ==
-                                    'rejected' ||
-                                application.status ==
-                                    'withdrawn'
-                            ? null
-                            : onScheduleInterview,
-                    icon: const Icon(
-                      Icons.event_outlined,
-                    ),
+                        application.status == 'accepted' ||
+                            application.status == 'rejected' ||
+                            application.status == 'withdrawn'
+                        ? null
+                        : onScheduleInterview,
+                    icon: const Icon(Icons.event_outlined),
                     label: Text(
                       application.hasInterview
                           ? 'Update interview'
@@ -502,73 +385,40 @@ class _ApplicantCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 PopupMenuButton<String>(
                   tooltip: 'Change status',
-                  onSelected:
-                      onStatusChanged,
+                  onSelected: onStatusChanged,
                   itemBuilder: (context) {
                     return const [
                       PopupMenuItem(
-                        value:
-                            'underReview',
-                        child: Text(
-                          'Move to review',
-                        ),
+                        value: 'underReview',
+                        child: Text('Move to review'),
                       ),
                       PopupMenuItem(
-                        value:
-                            'shortlisted',
-                        child: Text(
-                          'Shortlist',
-                        ),
+                        value: 'shortlisted',
+                        child: Text('Shortlist'),
                       ),
-                      PopupMenuItem(
-                        value: 'accepted',
-                        child: Text(
-                          'Accept',
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'rejected',
-                        child: Text(
-                          'Reject',
-                        ),
-                      ),
+                      PopupMenuItem(value: 'accepted', child: Text('Accept')),
+                      PopupMenuItem(value: 'rejected', child: Text('Reject')),
                     ];
                   },
                   child: Container(
                     height: 48,
-                    padding:
-                        const EdgeInsets
-                            .symmetric(
-                      horizontal: 16,
-                    ),
-                    decoration:
-                        BoxDecoration(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
                       color: AppTheme.navy,
-                      borderRadius:
-                          BorderRadius.circular(
-                        14,
-                      ),
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                    alignment:
-                        Alignment.center,
+                    alignment: Alignment.center,
                     child: const Row(
                       children: [
                         Text(
                           'Status',
                           style: TextStyle(
-                            color:
-                                Colors.white,
-                            fontWeight:
-                                FontWeight.w700,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                         SizedBox(width: 6),
-                        Icon(
-                          Icons
-                              .keyboard_arrow_down,
-                          color:
-                              Colors.white,
-                        ),
+                        Icon(Icons.keyboard_arrow_down, color: Colors.white),
                       ],
                     ),
                   ),
@@ -585,9 +435,7 @@ class _ApplicantCard extends StatelessWidget {
     final parts = value
         .trim()
         .split(RegExp(r'\s+'))
-        .where(
-          (part) => part.isNotEmpty,
-        )
+        .where((part) => part.isNotEmpty)
         .toList();
 
     if (parts.isEmpty) {
@@ -595,56 +443,42 @@ class _ApplicantCard extends StatelessWidget {
     }
 
     if (parts.length == 1) {
-      return parts.first[0]
-          .toUpperCase();
+      return parts.first[0].toUpperCase();
     }
 
-    return '${parts.first[0]}${parts.last[0]}'
-        .toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
 }
 
 class _InterviewSummary extends StatelessWidget {
   final ApplicationModel application;
 
-  const _InterviewSummary({
-    required this.application,
-  });
+  const _InterviewSummary({required this.application});
 
   @override
   Widget build(BuildContext context) {
-    final dateText =
-        DateFormat(
+    final dateText = DateFormat(
       'EEE, dd MMM yyyy • HH:mm',
-    ).format(
-      application.interviewDateTime!
-          .toLocal(),
-    );
+    ).format(application.interviewDateTime!.toLocal());
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFFF1EDFF),
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Row(
             children: [
-              Icon(
-                Icons.video_call_outlined,
-                color: AppTheme.purple,
-              ),
+              Icon(Icons.video_call_outlined, color: AppTheme.purple),
               SizedBox(width: 8),
               Text(
                 'Interview scheduled',
                 style: TextStyle(
-                  fontWeight:
-                      FontWeight.w800,
+                  fontWeight: FontWeight.w800,
                   color: AppTheme.navy,
                 ),
               ),
@@ -661,18 +495,11 @@ class _InterviewSummary extends StatelessWidget {
           const SizedBox(height: 5),
           Text(
             application.interviewMode,
-            style: const TextStyle(
-              color:
-                  AppTheme.textSecondary,
-            ),
+            style: const TextStyle(color: AppTheme.textSecondary),
           ),
           Text(
-            application
-                .interviewLocationOrLink,
-            style: const TextStyle(
-              color:
-                  AppTheme.textSecondary,
-            ),
+            application.interviewLocationOrLink,
+            style: const TextStyle(color: AppTheme.textSecondary),
           ),
         ],
       ),
@@ -698,37 +525,23 @@ class _MetricCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:
-            BorderRadius.circular(18),
-        border: Border.all(
-          color: const Color(0xFFE4E7EC),
-        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFE4E7EC)),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            color: AppTheme.purple,
-          ),
+          Icon(icon, color: AppTheme.purple),
           const SizedBox(height: 10),
           Text(
             value.toString(),
             style: const TextStyle(
               fontSize: 24,
-              fontWeight:
-                  FontWeight.w800,
+              fontWeight: FontWeight.w800,
               color: AppTheme.navy,
             ),
           ),
-          Text(
-            label,
-            style: const TextStyle(
-              color:
-                  AppTheme.textSecondary,
-            ),
-          ),
+          Text(label, style: const TextStyle(color: AppTheme.textSecondary)),
         ],
       ),
     );
@@ -739,10 +552,7 @@ class _StatusChip extends StatelessWidget {
   final String status;
   final String label;
 
-  const _StatusChip({
-    required this.status,
-    required this.label,
-  });
+  const _StatusChip({required this.status, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -751,43 +561,32 @@ class _StatusChip extends StatelessWidget {
 
     switch (status) {
       case 'accepted':
-        background =
-            const Color(0xFFEAF8EF);
-        foreground =
-            Colors.green.shade700;
+        background = const Color(0xFFEAF8EF);
+        foreground = Colors.green.shade700;
         break;
 
       case 'rejected':
       case 'withdrawn':
-        background =
-            const Color(0xFFFFEEEE);
-        foreground =
-            Colors.red.shade700;
+        background = const Color(0xFFFFEEEE);
+        foreground = Colors.red.shade700;
         break;
 
       case 'interview':
       case 'shortlisted':
-        background =
-            const Color(0xFFF1EDFF);
+        background = const Color(0xFFF1EDFF);
         foreground = AppTheme.purple;
         break;
 
       default:
-        background =
-            const Color(0xFFFFF7D6);
-        foreground =
-            Colors.orange.shade800;
+        background = const Color(0xFFFFF7D6);
+        foreground = Colors.orange.shade800;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 7,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
         color: background,
-        borderRadius:
-            BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         label,
@@ -801,8 +600,7 @@ class _StatusChip extends StatelessWidget {
   }
 }
 
-class _EmptyApplicantState
-    extends StatelessWidget {
+class _EmptyApplicantState extends StatelessWidget {
   const _EmptyApplicantState();
 
   @override
@@ -811,34 +609,23 @@ class _EmptyApplicantState
       child: Padding(
         padding: EdgeInsets.all(30),
         child: Column(
-          mainAxisSize:
-              MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.groups_outlined,
-              size: 60,
-              color: AppTheme.purple,
-            ),
+            Icon(Icons.groups_outlined, size: 60, color: AppTheme.purple),
             SizedBox(height: 18),
             Text(
               'No applications yet',
               style: TextStyle(
                 fontSize: 21,
-                fontWeight:
-                    FontWeight.w800,
+                fontWeight: FontWeight.w800,
                 color: AppTheme.navy,
               ),
             ),
             SizedBox(height: 8),
             Text(
               'Student applications will appear here in real time.',
-              textAlign:
-                  TextAlign.center,
-              style: TextStyle(
-                height: 1.5,
-                color:
-                    AppTheme.textSecondary,
-              ),
+              textAlign: TextAlign.center,
+              style: TextStyle(height: 1.5, color: AppTheme.textSecondary),
             ),
           ],
         ),
@@ -847,8 +634,7 @@ class _EmptyApplicantState
   }
 }
 
-class _NoFilteredApplicants
-    extends StatelessWidget {
+class _NoFilteredApplicants extends StatelessWidget {
   const _NoFilteredApplicants();
 
   @override
@@ -857,19 +643,13 @@ class _NoFilteredApplicants
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:
-            BorderRadius.circular(20),
-        border: Border.all(
-          color: const Color(0xFFE4E7EC),
-        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE4E7EC)),
       ),
       child: const Text(
         'No applications match this status filter.',
         textAlign: TextAlign.center,
-        style: TextStyle(
-          color:
-              AppTheme.textSecondary,
-        ),
+        style: TextStyle(color: AppTheme.textSecondary),
       ),
     );
   }

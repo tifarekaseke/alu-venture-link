@@ -61,17 +61,17 @@ class OpportunityModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        ownerId,
-        startupName,
-        title,
-        description,
-        requiredSkills,
-        opportunityType,
-        workMode,
-        hoursPerWeek,
-        status,
-        deadline,
-        createdAt,
-      ];
+    id,
+    ownerId,
+    startupName,
+    title,
+    description,
+    requiredSkills,
+    opportunityType,
+    workMode,
+    hoursPerWeek,
+    status,
+    deadline,
+    createdAt,
+  ];
 }

@@ -12,30 +12,21 @@ import 'create_startup_profile_screen.dart';
 class StartupProfileScreen extends StatefulWidget {
   final AppUser user;
 
-  const StartupProfileScreen({
-    required this.user,
-    super.key,
-  });
+  const StartupProfileScreen({required this.user, super.key});
 
   @override
-  State<StartupProfileScreen> createState() =>
-      _StartupProfileScreenState();
+  State<StartupProfileScreen> createState() => _StartupProfileScreenState();
 }
 
-class _StartupProfileScreenState
-    extends State<StartupProfileScreen> {
+class _StartupProfileScreenState extends State<StartupProfileScreen> {
   @override
   void initState() {
     super.initState();
 
-    context
-        .read<StartupCubit>()
-        .watchStartupProfile(widget.user.uid);
+    context.read<StartupCubit>().watchStartupProfile(widget.user.uid);
   }
 
-  Future<void> _openProfileForm({
-    StartupProfileModel? profile,
-  }) async {
+  Future<void> _openProfileForm({StartupProfileModel? profile}) async {
     await Navigator.of(context).push<bool>(
       MaterialPageRoute<bool>(
         builder: (_) => CreateStartupProfileScreen(
@@ -58,9 +49,7 @@ class _StartupProfileScreenState
                 return IconButton(
                   tooltip: 'Edit profile',
                   onPressed: () {
-                    _openProfileForm(
-                      profile: state.profile,
-                    );
+                    _openProfileForm(profile: state.profile);
                   },
                   icon: const Icon(Icons.edit_outlined),
                 );
@@ -81,19 +70,14 @@ class _StartupProfileScreenState
       body: BlocConsumer<StartupCubit, StartupState>(
         listener: (context, state) {
           if (state is StartupFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-              ),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
-          if (state is StartupInitial ||
-              state is StartupLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+          if (state is StartupInitial || state is StartupLoading) {
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (state is StartupProfileMissing) {
@@ -108,9 +92,7 @@ class _StartupProfileScreenState
             return _StartupProfileContent(
               profile: state.profile,
               onEdit: () {
-                _openProfileForm(
-                  profile: state.profile,
-                );
+                _openProfileForm(profile: state.profile);
               },
             );
           }
@@ -119,10 +101,7 @@ class _StartupProfileScreenState
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(28),
-                child: Text(
-                  state.message,
-                  textAlign: TextAlign.center,
-                ),
+                child: Text(state.message, textAlign: TextAlign.center),
               ),
             );
           }
@@ -138,20 +117,12 @@ class _StartupProfileContent extends StatelessWidget {
   final StartupProfileModel profile;
   final VoidCallback onEdit;
 
-  const _StartupProfileContent({
-    required this.profile,
-    required this.onEdit,
-  });
+  const _StartupProfileContent({required this.profile, required this.onEdit});
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        20,
-        18,
-        20,
-        36,
-      ),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 36),
       children: [
         Container(
           padding: const EdgeInsets.all(24),
@@ -191,10 +162,7 @@ class _StartupProfileContent extends StatelessWidget {
                   ),
                   if (profile.isApproved) ...[
                     const SizedBox(width: 8),
-                    const Icon(
-                      Icons.verified,
-                      color: AppTheme.gold,
-                    ),
+                    const Icon(Icons.verified, color: AppTheme.gold),
                   ],
                 ],
               ),
@@ -202,14 +170,10 @@ class _StartupProfileContent extends StatelessWidget {
               Text(
                 '${profile.industry} • ${profile.ventureStage}',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white70,
-                ),
+                style: const TextStyle(color: Colors.white70),
               ),
               const SizedBox(height: 16),
-              _VerificationBadge(
-                profile: profile,
-              ),
+              _VerificationBadge(profile: profile),
             ],
           ),
         ),
@@ -220,10 +184,7 @@ class _StartupProfileContent extends StatelessWidget {
           title: 'About the venture',
           child: Text(
             profile.description,
-            style: const TextStyle(
-              height: 1.55,
-              color: AppTheme.textSecondary,
-            ),
+            style: const TextStyle(height: 1.55, color: AppTheme.textSecondary),
           ),
         ),
 
@@ -276,8 +237,7 @@ class _StartupProfileContent extends StatelessWidget {
           ),
         ],
 
-        if (profile.isRejected &&
-            profile.rejectionReason.isNotEmpty) ...[
+        if (profile.isRejected && profile.rejectionReason.isNotEmpty) ...[
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(20),
@@ -286,15 +246,11 @@ class _StartupProfileContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Icon(
-                      Icons.error_outline,
-                      color: Colors.red.shade700,
-                    ),
+                    Icon(Icons.error_outline, color: Colors.red.shade700),
                     const SizedBox(width: 9),
                     Text(
                       'Verification feedback',
@@ -308,10 +264,7 @@ class _StartupProfileContent extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   profile.rejectionReason,
-                  style: TextStyle(
-                    height: 1.5,
-                    color: Colors.red.shade700,
-                  ),
+                  style: TextStyle(height: 1.5, color: Colors.red.shade700),
                 ),
               ],
             ),
@@ -337,9 +290,7 @@ class _StartupProfileContent extends StatelessWidget {
 class _VerificationBadge extends StatelessWidget {
   final StartupProfileModel profile;
 
-  const _VerificationBadge({
-    required this.profile,
-  });
+  const _VerificationBadge({required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -362,10 +313,7 @@ class _VerificationBadge extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 13,
-        vertical: 9,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
       decoration: BoxDecoration(
         color: Colors.white.withAlpha(20),
         borderRadius: BorderRadius.circular(20),
@@ -373,18 +321,11 @@ class _VerificationBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 18,
-            color: color,
-          ),
+          Icon(icon, size: 18, color: color),
           const SizedBox(width: 7),
           Text(
             text,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.w800,
-            ),
+            style: TextStyle(color: color, fontWeight: FontWeight.w800),
           ),
         ],
       ),
@@ -396,10 +337,7 @@ class _ProfileSection extends StatelessWidget {
   final String title;
   final Widget child;
 
-  const _ProfileSection({
-    required this.title,
-    required this.child,
-  });
+  const _ProfileSection({required this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -409,13 +347,10 @@ class _ProfileSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: const Color(0xFFE4E7EC),
-        ),
+        border: Border.all(color: const Color(0xFFE4E7EC)),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
@@ -437,30 +372,19 @@ class _InformationRow extends StatelessWidget {
   final IconData icon;
   final String label;
 
-  const _InformationRow({
-    required this.icon,
-    required this.label,
-  });
+  const _InformationRow({required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          size: 21,
-          color: AppTheme.purple,
-        ),
+        Icon(icon, size: 21, color: AppTheme.purple),
         const SizedBox(width: 12),
         Expanded(
           child: SelectableText(
             label,
-            style: const TextStyle(
-              height: 1.45,
-              color: AppTheme.textSecondary,
-            ),
+            style: const TextStyle(height: 1.45, color: AppTheme.textSecondary),
           ),
         ),
       ],
@@ -468,13 +392,10 @@ class _InformationRow extends StatelessWidget {
   }
 }
 
-class _MissingStartupProfile
-    extends StatelessWidget {
+class _MissingStartupProfile extends StatelessWidget {
   final VoidCallback onCreate;
 
-  const _MissingStartupProfile({
-    required this.onCreate,
-  });
+  const _MissingStartupProfile({required this.onCreate});
 
   @override
   Widget build(BuildContext context) {
@@ -503,17 +424,12 @@ class _MissingStartupProfile
             const Text(
               'Complete your venture information and submit it for ALU verification.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                height: 1.5,
-                color: AppTheme.textSecondary,
-              ),
+              style: TextStyle(height: 1.5, color: AppTheme.textSecondary),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: onCreate,
-              child: const Text(
-                'Create startup profile',
-              ),
+              child: const Text('Create startup profile'),
             ),
           ],
         ),

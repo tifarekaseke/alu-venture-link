@@ -44,8 +44,7 @@ class ApplicationModel extends Equatable {
   });
 
   bool get hasInterview {
-    return interviewDateTime != null &&
-        interviewMode.trim().isNotEmpty;
+    return interviewDateTime != null && interviewMode.trim().isNotEmpty;
   }
 
   bool get canWithdraw {
@@ -65,60 +64,45 @@ class ApplicationModel extends Equatable {
 
     return ApplicationModel(
       id: document.id,
-      opportunityId:
-          data['opportunityId'] as String? ?? '',
-      opportunityTitle:
-          data['opportunityTitle'] as String? ?? '',
-      startupOwnerId:
-          data['startupOwnerId'] as String? ?? '',
-      startupName:
-          data['startupName'] as String? ?? '',
+      opportunityId: data['opportunityId'] as String? ?? '',
+      opportunityTitle: data['opportunityTitle'] as String? ?? '',
+      startupOwnerId: data['startupOwnerId'] as String? ?? '',
+      startupName: data['startupName'] as String? ?? '',
       studentId: data['studentId'] as String? ?? '',
-      studentName:
-          data['studentName'] as String? ?? '',
-      studentEmail:
-          data['studentEmail'] as String? ?? '',
-      coverLetter:
-          data['coverLetter'] as String? ?? '',
+      studentName: data['studentName'] as String? ?? '',
+      studentEmail: data['studentEmail'] as String? ?? '',
+      coverLetter: data['coverLetter'] as String? ?? '',
       status: data['status'] as String? ?? 'submitted',
       submittedAt: readDate(data['submittedAt']),
       updatedAt: readDate(data['updatedAt']),
-      interviewDateTime:
-          readDate(data['interviewDateTime']),
-      interviewMode:
-          data['interviewMode'] as String? ?? '',
-      interviewLocationOrLink:
-          data['interviewLocationOrLink']
-                  as String? ??
-              '',
-      interviewNotes:
-          data['interviewNotes'] as String? ?? '',
-      interviewScheduledBy:
-          data['interviewScheduledBy'] as String? ?? '',
-      interviewScheduledAt:
-          readDate(data['interviewScheduledAt']),
+      interviewDateTime: readDate(data['interviewDateTime']),
+      interviewMode: data['interviewMode'] as String? ?? '',
+      interviewLocationOrLink: data['interviewLocationOrLink'] as String? ?? '',
+      interviewNotes: data['interviewNotes'] as String? ?? '',
+      interviewScheduledBy: data['interviewScheduledBy'] as String? ?? '',
+      interviewScheduledAt: readDate(data['interviewScheduledAt']),
     );
   }
 
   @override
   List<Object?> get props => [
-        id,
-        opportunityId,
-        opportunityTitle,
-        startupOwnerId,
-        startupName,
-        studentId,
-        studentName,
-        studentEmail,
-        coverLetter,
-        status,
-        submittedAt,
-        updatedAt,
-        interviewDateTime,
-        interviewMode,
-        interviewLocationOrLink,
-        interviewNotes,
-        interviewScheduledBy,
-        interviewScheduledAt,
-      ];
+    id,
+    opportunityId,
+    opportunityTitle,
+    startupOwnerId,
+    startupName,
+    studentId,
+    studentName,
+    studentEmail,
+    coverLetter,
+    status,
+    submittedAt,
+    updatedAt,
+    interviewDateTime,
+    interviewMode,
+    interviewLocationOrLink,
+    interviewNotes,
+    interviewScheduledBy,
+    interviewScheduledAt,
+  ];
 }

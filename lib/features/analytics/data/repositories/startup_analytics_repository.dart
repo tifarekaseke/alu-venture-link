@@ -6,37 +6,31 @@ import '../../../opportunities/data/models/opportunity_model.dart';
 class StartupAnalyticsRepository {
   final FirebaseFirestore _firestore;
 
-  StartupAnalyticsRepository({
-    FirebaseFirestore? firestore,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance;
+  StartupAnalyticsRepository({FirebaseFirestore? firestore})
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   Stream<List<OpportunityModel>> watchStartupOpportunities(
     String startupOwnerId,
   ) {
     return _firestore
         .collection('opportunities')
-        .where(
-          'ownerId',
-          isEqualTo: startupOwnerId,
-        )
+        .where('ownerId', isEqualTo: startupOwnerId)
         .snapshots()
         .map((snapshot) {
-      final opportunities = snapshot.docs
-          .map(OpportunityModel.fromDocument)
-          .toList();
+          final opportunities = snapshot.docs
+              .map(OpportunityModel.fromDocument)
+              .toList();
 
-      opportunities.sort((a, b) {
-        final aDate = a.createdAt ??
-            DateTime.fromMillisecondsSinceEpoch(0);
+          opportunities.sort((a, b) {
+            final aDate = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
 
-        final bDate = b.createdAt ??
-            DateTime.fromMillisecondsSinceEpoch(0);
+            final bDate = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
 
-        return bDate.compareTo(aDate);
-      });
+            return bDate.compareTo(aDate);
+          });
 
-      return opportunities;
-    });
+          return opportunities;
+        });
   }
 
   Stream<List<ApplicationModel>> watchStartupApplications(
@@ -44,27 +38,24 @@ class StartupAnalyticsRepository {
   ) {
     return _firestore
         .collection('applications')
-        .where(
-          'startupOwnerId',
-          isEqualTo: startupOwnerId,
-        )
+        .where('startupOwnerId', isEqualTo: startupOwnerId)
         .snapshots()
         .map((snapshot) {
-      final applications = snapshot.docs
-          .map(ApplicationModel.fromDocument)
-          .toList();
+          final applications = snapshot.docs
+              .map(ApplicationModel.fromDocument)
+              .toList();
 
-      applications.sort((a, b) {
-        final aDate = a.submittedAt ??
-            DateTime.fromMillisecondsSinceEpoch(0);
+          applications.sort((a, b) {
+            final aDate =
+                a.submittedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
 
-        final bDate = b.submittedAt ??
-            DateTime.fromMillisecondsSinceEpoch(0);
+            final bDate =
+                b.submittedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
 
-        return bDate.compareTo(aDate);
-      });
+            return bDate.compareTo(aDate);
+          });
 
-      return applications;
-    });
+          return applications;
+        });
   }
 }

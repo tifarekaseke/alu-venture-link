@@ -12,17 +12,14 @@ import 'analytics_state.dart';
 class AnalyticsCubit extends Cubit<AnalyticsState> {
   final StartupAnalyticsRepository _analyticsRepository;
 
-  StreamSubscription<List<OpportunityModel>>?
-      _opportunitySubscription;
+  StreamSubscription<List<OpportunityModel>>? _opportunitySubscription;
 
-  StreamSubscription<List<ApplicationModel>>?
-      _applicationSubscription;
+  StreamSubscription<List<ApplicationModel>>? _applicationSubscription;
 
   List<OpportunityModel>? _latestOpportunities;
   List<ApplicationModel>? _latestApplications;
 
-  AnalyticsCubit(this._analyticsRepository)
-      : super(const AnalyticsInitial());
+  AnalyticsCubit(this._analyticsRepository) : super(const AnalyticsInitial());
 
   void watchStartupAnalytics(String startupOwnerId) {
     emit(const AnalyticsLoading());
@@ -36,34 +33,26 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     _opportunitySubscription = _analyticsRepository
         .watchStartupOpportunities(startupOwnerId)
         .listen(
-      (opportunities) {
-        _latestOpportunities = opportunities;
-        _emitAnalyticsWhenReady();
-      },
-      onError: (Object error) {
-        emit(
-          AnalyticsFailure(
-            _friendlyError(error),
-          ),
+          (opportunities) {
+            _latestOpportunities = opportunities;
+            _emitAnalyticsWhenReady();
+          },
+          onError: (Object error) {
+            emit(AnalyticsFailure(_friendlyError(error)));
+          },
         );
-      },
-    );
 
     _applicationSubscription = _analyticsRepository
         .watchStartupApplications(startupOwnerId)
         .listen(
-      (applications) {
-        _latestApplications = applications;
-        _emitAnalyticsWhenReady();
-      },
-      onError: (Object error) {
-        emit(
-          AnalyticsFailure(
-            _friendlyError(error),
-          ),
+          (applications) {
+            _latestApplications = applications;
+            _emitAnalyticsWhenReady();
+          },
+          onError: (Object error) {
+            emit(AnalyticsFailure(_friendlyError(error)));
+          },
         );
-      },
-    );
   }
 
   void _emitAnalyticsWhenReady() {
@@ -81,18 +70,15 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     }
 
     final performances = opportunities.map((opportunity) {
-      final opportunityApplications =
-          applications.where((application) {
+      final opportunityApplications = applications.where((application) {
         return application.opportunityId == opportunity.id;
       }).toList();
 
-      final interviewCount =
-          opportunityApplications.where((application) {
+      final interviewCount = opportunityApplications.where((application) {
         return application.status == 'interview';
       }).length;
 
-      final acceptedCount =
-          opportunityApplications.where((application) {
+      final acceptedCount = opportunityApplications.where((application) {
         return application.status == 'accepted';
       }).length;
 
@@ -107,8 +93,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     }).toList();
 
     performances.sort((a, b) {
-      final applicationComparison =
-          b.applications.compareTo(a.applications);
+      final applicationComparison = b.applications.compareTo(a.applications);
 
       if (applicationComparison != 0) {
         return applicationComparison;
@@ -121,12 +106,10 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       AnalyticsLoaded(
         StartupAnalytics(
           totalOpportunities: opportunities.length,
-          openOpportunities:
-              opportunities.where((opportunity) {
+          openOpportunities: opportunities.where((opportunity) {
             return opportunity.status == 'open';
           }).length,
-          closedOpportunities:
-              opportunities.where((opportunity) {
+          closedOpportunities: opportunities.where((opportunity) {
             return opportunity.status == 'closed';
           }).length,
           totalApplications: applications.length,
@@ -156,8 +139,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
           return 'Firestore needs an index for this analytics query. Open the link shown in the terminal.';
 
         default:
-          return error.message ??
-              'A Firebase analytics error occurred.';
+          return error.message ?? 'A Firebase analytics error occurred.';
       }
     }
 

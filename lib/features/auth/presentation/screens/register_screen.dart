@@ -41,11 +41,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     context.read<AuthCubit>().register(
-          fullName: _nameController.text,
-          email: _emailController.text,
-          password: _passwordController.text,
-          role: _selectedRole,
-        );
+      fullName: _nameController.text,
+      email: _emailController.text,
+      password: _passwordController.text,
+      role: _selectedRole,
+    );
   }
 
   @override
@@ -56,11 +56,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                ),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             }
 
             if (state is AuthAuthenticated) {
@@ -299,10 +297,7 @@ class _RoleCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              icon,
-              color: selected ? AppTheme.gold : AppTheme.navy,
-            ),
+            Icon(icon, color: selected ? AppTheme.gold : AppTheme.navy),
             const SizedBox(height: 18),
             Text(
               title,

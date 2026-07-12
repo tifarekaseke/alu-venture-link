@@ -5,17 +5,11 @@ import '../../../opportunities/data/models/opportunity_model.dart';
 class BookmarkRepository {
   final FirebaseFirestore _firestore;
 
-  BookmarkRepository({
-    FirebaseFirestore? firestore,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance;
+  BookmarkRepository({FirebaseFirestore? firestore})
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
-  CollectionReference<Map<String, dynamic>> _bookmarkCollection(
-    String userId,
-  ) {
-    return _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('bookmarks');
+  CollectionReference<Map<String, dynamic>> _bookmarkCollection(String userId) {
+    return _firestore.collection('users').doc(userId).collection('bookmarks');
   }
 
   Stream<List<OpportunityModel>> watchSavedOpportunities(String userId) {
@@ -38,8 +32,7 @@ class BookmarkRepository {
     required String userId,
     required OpportunityModel opportunity,
   }) async {
-    final bookmarkDocument =
-        _bookmarkCollection(userId).doc(opportunity.id);
+    final bookmarkDocument = _bookmarkCollection(userId).doc(opportunity.id);
 
     final existingBookmark = await bookmarkDocument.get();
 

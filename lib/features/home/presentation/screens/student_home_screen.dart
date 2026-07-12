@@ -18,18 +18,13 @@ import '../../../opportunities/presentation/widgets/opportunity_card.dart';
 class StudentHomeScreen extends StatefulWidget {
   final AppUser user;
 
-  const StudentHomeScreen({
-    required this.user,
-    super.key,
-  });
+  const StudentHomeScreen({required this.user, super.key});
 
   @override
-  State<StudentHomeScreen> createState() =>
-      _StudentHomeScreenState();
+  State<StudentHomeScreen> createState() => _StudentHomeScreenState();
 }
 
-class _StudentHomeScreenState
-    extends State<StudentHomeScreen> {
+class _StudentHomeScreenState extends State<StudentHomeScreen> {
   final _searchController = TextEditingController();
 
   String _selectedWorkMode = 'All';
@@ -39,17 +34,11 @@ class _StudentHomeScreenState
   void initState() {
     super.initState();
 
-    context
-        .read<OpportunityCubit>()
-        .watchOpenOpportunities();
+    context.read<OpportunityCubit>().watchOpenOpportunities();
 
-    context
-        .read<BookmarkCubit>()
-        .watchSavedOpportunities(widget.user.uid);
+    context.read<BookmarkCubit>().watchSavedOpportunities(widget.user.uid);
 
-    context
-        .read<NotificationCubit>()
-        .watchNotifications(widget.user.uid);
+    context.read<NotificationCubit>().watchNotifications(widget.user.uid);
   }
 
   @override
@@ -61,57 +50,38 @@ class _StudentHomeScreenState
   List<OpportunityModel> _filterOpportunities(
     List<OpportunityModel> opportunities,
   ) {
-    final query =
-        _searchController.text.trim().toLowerCase();
+    final query = _searchController.text.trim().toLowerCase();
 
     return opportunities.where((opportunity) {
-      final matchesSearch = query.isEmpty ||
-          opportunity.title
-              .toLowerCase()
-              .contains(query) ||
-          opportunity.startupName
-              .toLowerCase()
-              .contains(query) ||
+      final matchesSearch =
+          query.isEmpty ||
+          opportunity.title.toLowerCase().contains(query) ||
+          opportunity.startupName.toLowerCase().contains(query) ||
           opportunity.requiredSkills.any(
-            (skill) =>
-                skill.toLowerCase().contains(query),
+            (skill) => skill.toLowerCase().contains(query),
           );
 
       final matchesWorkMode =
           _selectedWorkMode == 'All' ||
-              opportunity.workMode ==
-                  _selectedWorkMode;
+          opportunity.workMode == _selectedWorkMode;
 
-      final matchesType = _selectedType == 'All' ||
-          opportunity.opportunityType ==
-              _selectedType;
+      final matchesType =
+          _selectedType == 'All' ||
+          opportunity.opportunityType == _selectedType;
 
-      return matchesSearch &&
-          matchesWorkMode &&
-          matchesType;
+      return matchesSearch && matchesWorkMode && matchesType;
     }).toList();
   }
 
-  int _calculateMatchPercentage(
-    AppUser user,
-    OpportunityModel opportunity,
-  ) {
+  int _calculateMatchPercentage(AppUser user, OpportunityModel opportunity) {
     final studentSkills = user.skills
-        .map(
-          (skill) => skill.trim().toLowerCase(),
-        )
-        .where(
-          (skill) => skill.isNotEmpty,
-        )
+        .map((skill) => skill.trim().toLowerCase())
+        .where((skill) => skill.isNotEmpty)
         .toSet();
 
     final requiredSkills = opportunity.requiredSkills
-        .map(
-          (skill) => skill.trim().toLowerCase(),
-        )
-        .where(
-          (skill) => skill.isNotEmpty,
-        )
+        .map((skill) => skill.trim().toLowerCase())
+        .where((skill) => skill.isNotEmpty)
         .toSet();
 
     if (requiredSkills.isEmpty) {
@@ -122,8 +92,7 @@ class _StudentHomeScreenState
       return 0;
     }
 
-    final matchedSkills =
-        requiredSkills.where((requiredSkill) {
+    final matchedSkills = requiredSkills.where((requiredSkill) {
       return studentSkills.any((studentSkill) {
         return studentSkill == requiredSkill ||
             studentSkill.contains(requiredSkill) ||
@@ -131,33 +100,24 @@ class _StudentHomeScreenState
       });
     }).length;
 
-    return ((matchedSkills / requiredSkills.length) *
-            100)
-        .round();
+    return ((matchedSkills / requiredSkills.length) * 100).round();
   }
 
   void _openNotifications() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => NotificationsScreen(
-          user: widget.user,
-        ),
+        builder: (_) => NotificationsScreen(user: widget.user),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final firstName =
-        widget.user.fullName.trim().isEmpty
-            ? 'Student'
-            : widget.user.fullName
-                .trim()
-                .split(' ')
-                .first;
+    final firstName = widget.user.fullName.trim().isEmpty
+        ? 'Student'
+        : widget.user.fullName.trim().split(' ').first;
 
-    final bookmarkState =
-        context.watch<BookmarkCubit>().state;
+    final bookmarkState = context.watch<BookmarkCubit>().state;
 
     final savedIds = bookmarkState is BookmarkLoaded
         ? bookmarkState.savedOpportunityIds
@@ -166,20 +126,16 @@ class _StudentHomeScreenState
     return BlocListener<BookmarkCubit, BookmarkState>(
       listener: (context, state) {
         if (state is BookmarkFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-            ),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
       child: Scaffold(
         appBar: AppBar(
           title: const Text('ALU VentureLink'),
           actions: [
-            NotificationBell(
-              onPressed: _openNotifications,
-            ),
+            NotificationBell(onPressed: _openNotifications),
             IconButton(
               tooltip: 'Sign out',
               onPressed: () {
@@ -189,38 +145,24 @@ class _StudentHomeScreenState
             ),
           ],
         ),
-        body: BlocConsumer<
-            OpportunityCubit,
-            OpportunityState>(
+        body: BlocConsumer<OpportunityCubit, OpportunityState>(
           listener: (context, state) {
             if (state is OpportunityFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                ),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
           builder: (context, state) {
             return RefreshIndicator(
               onRefresh: () async {
-                context
-                    .read<OpportunityCubit>()
-                    .watchOpenOpportunities();
+                context.read<OpportunityCubit>().watchOpenOpportunities();
 
-                await Future<void>.delayed(
-                  const Duration(milliseconds: 500),
-                );
+                await Future<void>.delayed(const Duration(milliseconds: 500));
               },
               child: ListView(
-                physics:
-                    const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(
-                  20,
-                  16,
-                  20,
-                  32,
-                ),
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
                 children: [
                   Text(
                     'Hello, $firstName 👋',
@@ -245,8 +187,7 @@ class _StudentHomeScreenState
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: AppTheme.navy,
-                      borderRadius:
-                          BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(24),
                     ),
                     child: Row(
                       children: [
@@ -255,8 +196,7 @@ class _StudentHomeScreenState
                           height: 52,
                           decoration: BoxDecoration(
                             color: Colors.white.withAlpha(25),
-                            borderRadius:
-                                BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                           child: const Icon(
                             Icons.auto_awesome,
@@ -267,16 +207,14 @@ class _StudentHomeScreenState
                         const SizedBox(width: 15),
                         const Expanded(
                           child: Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Smart opportunity matching',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 17,
-                                  fontWeight:
-                                      FontWeight.w800,
+                                  fontWeight: FontWeight.w800,
                                 ),
                               ),
                               SizedBox(height: 5),
@@ -303,25 +241,19 @@ class _StudentHomeScreenState
                       setState(() {});
                     },
                     decoration: InputDecoration(
-                      hintText:
-                          'Search roles, startups or skills',
-                      prefixIcon:
-                          const Icon(Icons.search),
-                      suffixIcon:
-                          _searchController.text.isEmpty
-                              ? null
-                              : IconButton(
-                                  tooltip: 'Clear search',
-                                  onPressed: () {
-                                    _searchController
-                                        .clear();
+                      hintText: 'Search roles, startups or skills',
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: _searchController.text.isEmpty
+                          ? null
+                          : IconButton(
+                              tooltip: 'Clear search',
+                              onPressed: () {
+                                _searchController.clear();
 
-                                    setState(() {});
-                                  },
-                                  icon: const Icon(
-                                    Icons.close,
-                                  ),
-                                ),
+                                setState(() {});
+                              },
+                              icon: const Icon(Icons.close),
+                            ),
                     ),
                   ),
 
@@ -332,12 +264,7 @@ class _StudentHomeScreenState
                       Expanded(
                         child: _FilterDropdown(
                           value: _selectedWorkMode,
-                          items: const [
-                            'All',
-                            'On-campus',
-                            'Remote',
-                            'Hybrid',
-                          ],
+                          items: const ['All', 'On-campus', 'Remote', 'Hybrid'],
                           onChanged: (value) {
                             setState(() {
                               _selectedWorkMode = value;
@@ -375,24 +302,20 @@ class _StudentHomeScreenState
                           'Open opportunities',
                           style: TextStyle(
                             fontSize: 21,
-                            fontWeight:
-                                FontWeight.w800,
+                            fontWeight: FontWeight.w800,
                             color: AppTheme.navy,
                           ),
                         ),
                       ),
                       if (state is OpportunityLoaded)
                         Container(
-                          padding:
-                              const EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: 10,
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color:
-                                const Color(0xFFF1EDFF),
-                            borderRadius:
-                                BorderRadius.circular(20),
+                            color: const Color(0xFFF1EDFF),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
                             _filterOpportunities(
@@ -400,8 +323,7 @@ class _StudentHomeScreenState
                             ).length.toString(),
                             style: const TextStyle(
                               color: AppTheme.purple,
-                              fontWeight:
-                                  FontWeight.w800,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ),
@@ -415,79 +337,57 @@ class _StudentHomeScreenState
                     const Center(
                       child: Padding(
                         padding: EdgeInsets.all(30),
-                        child:
-                            CircularProgressIndicator(),
+                        child: CircularProgressIndicator(),
                       ),
                     )
                   else if (state is OpportunityLoaded &&
-                      _filterOpportunities(
-                        state.opportunities,
-                      ).isEmpty)
+                      _filterOpportunities(state.opportunities).isEmpty)
                     const _EmptyStudentState()
                   else if (state is OpportunityLoaded)
-                    ..._filterOpportunities(
-                      state.opportunities,
-                    ).map(
-                      (opportunity) {
-                        final isSaved =
-                            savedIds.contains(
-                          opportunity.id,
-                        );
+                    ..._filterOpportunities(state.opportunities).map((
+                      opportunity,
+                    ) {
+                      final isSaved = savedIds.contains(opportunity.id);
 
-                        final matchPercentage =
-                            _calculateMatchPercentage(
-                          widget.user,
-                          opportunity,
-                        );
+                      final matchPercentage = _calculateMatchPercentage(
+                        widget.user,
+                        opportunity,
+                      );
 
-                        return OpportunityCard(
-                          opportunity: opportunity,
-                          matchPercentage:
-                              matchPercentage,
-                          trailing: IconButton(
-                            tooltip: isSaved
-                                ? 'Remove from saved'
-                                : 'Save opportunity',
-                            onPressed: () {
-                              context
-                                  .read<BookmarkCubit>()
-                                  .toggleBookmark(
-                                    userId:
-                                        widget.user.uid,
-                                    opportunity:
-                                        opportunity,
-                                  );
-                            },
-                            icon: Icon(
-                              isSaved
-                                  ? Icons.bookmark
-                                  : Icons
-                                      .bookmark_border_outlined,
-                              color: isSaved
-                                  ? AppTheme.purple
-                                  : null,
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) =>
-                                    OpportunityDetailScreen(
-                                  student:
-                                      widget.user,
-                                  opportunity:
-                                      opportunity,
-                                ),
-                              ),
+                      return OpportunityCard(
+                        opportunity: opportunity,
+                        matchPercentage: matchPercentage,
+                        trailing: IconButton(
+                          tooltip: isSaved
+                              ? 'Remove from saved'
+                              : 'Save opportunity',
+                          onPressed: () {
+                            context.read<BookmarkCubit>().toggleBookmark(
+                              userId: widget.user.uid,
+                              opportunity: opportunity,
                             );
                           },
-                        );
-                      },
-                    )
+                          icon: Icon(
+                            isSaved
+                                ? Icons.bookmark
+                                : Icons.bookmark_border_outlined,
+                            color: isSaved ? AppTheme.purple : null,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => OpportunityDetailScreen(
+                                student: widget.user,
+                                opportunity: opportunity,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    })
                   else if (state is OpportunityFailure)
-                    _ErrorState(
-                      message: state.message,
-                    )
+                    _ErrorState(message: state.message)
                   else
                     const SizedBox.shrink(),
                 ],
@@ -514,15 +414,11 @@ class _FilterDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 14,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFFE4E7EC),
-        ),
+        border: Border.all(color: const Color(0xFFE4E7EC)),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -532,10 +428,7 @@ class _FilterDropdown extends StatelessWidget {
           items: items.map((item) {
             return DropdownMenuItem<String>(
               value: item,
-              child: Text(
-                item,
-                overflow: TextOverflow.ellipsis,
-              ),
+              child: Text(item, overflow: TextOverflow.ellipsis),
             );
           }).toList(),
           onChanged: (selectedValue) {
@@ -561,17 +454,11 @@ class _EmptyStudentState extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: const Color(0xFFE4E7EC),
-        ),
+        border: Border.all(color: const Color(0xFFE4E7EC)),
       ),
       child: const Column(
         children: [
-          Icon(
-            Icons.search_off_outlined,
-            size: 48,
-            color: AppTheme.purple,
-          ),
+          Icon(Icons.search_off_outlined, size: 48, color: AppTheme.purple),
           SizedBox(height: 14),
           Text(
             'No matching opportunities',
@@ -585,10 +472,7 @@ class _EmptyStudentState extends StatelessWidget {
           Text(
             'Try changing the search phrase or filters.',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              height: 1.5,
-              color: AppTheme.textSecondary,
-            ),
+            style: TextStyle(height: 1.5, color: AppTheme.textSecondary),
           ),
         ],
       ),
@@ -599,9 +483,7 @@ class _EmptyStudentState extends StatelessWidget {
 class _ErrorState extends StatelessWidget {
   final String message;
 
-  const _ErrorState({
-    required this.message,
-  });
+  const _ErrorState({required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -613,19 +495,12 @@ class _ErrorState extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 45,
-            color: Colors.red.shade700,
-          ),
+          Icon(Icons.error_outline, size: 45, color: Colors.red.shade700),
           const SizedBox(height: 13),
           Text(
             message,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              height: 1.5,
-              color: Colors.red.shade700,
-            ),
+            style: TextStyle(height: 1.5, color: Colors.red.shade700),
           ),
         ],
       ),

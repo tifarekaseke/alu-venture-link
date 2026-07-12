@@ -9,18 +9,14 @@ import '../cubit/profile_state.dart';
 class EditStudentProfileScreen extends StatefulWidget {
   final AppUser user;
 
-  const EditStudentProfileScreen({
-    required this.user,
-    super.key,
-  });
+  const EditStudentProfileScreen({required this.user, super.key});
 
   @override
   State<EditStudentProfileScreen> createState() =>
       _EditStudentProfileScreenState();
 }
 
-class _EditStudentProfileScreenState
-    extends State<EditStudentProfileScreen> {
+class _EditStudentProfileScreenState extends State<EditStudentProfileScreen> {
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _nameController;
@@ -37,21 +33,13 @@ class _EditStudentProfileScreenState
   void initState() {
     super.initState();
 
-    _nameController = TextEditingController(
-      text: widget.user.fullName,
-    );
+    _nameController = TextEditingController(text: widget.user.fullName);
 
-    _campusController = TextEditingController(
-      text: widget.user.campus,
-    );
+    _campusController = TextEditingController(text: widget.user.campus);
 
-    _programController = TextEditingController(
-      text: widget.user.program,
-    );
+    _programController = TextEditingController(text: widget.user.program);
 
-    _bioController = TextEditingController(
-      text: widget.user.bio,
-    );
+    _bioController = TextEditingController(text: widget.user.bio);
 
     _skillsController = TextEditingController(
       text: widget.user.skills.join(', '),
@@ -67,13 +55,9 @@ class _EditStudentProfileScreenState
       text: widget.user.portfolioUrl,
     );
 
-    _linkedInController = TextEditingController(
-      text: widget.user.linkedInUrl,
-    );
+    _linkedInController = TextEditingController(text: widget.user.linkedInUrl);
 
-    _githubController = TextEditingController(
-      text: widget.user.githubUrl,
-    );
+    _githubController = TextEditingController(text: widget.user.githubUrl);
   }
 
   @override
@@ -123,38 +107,31 @@ class _EditStudentProfileScreenState
       return;
     }
 
-    final availability =
-        int.tryParse(_availabilityController.text.trim()) ?? 0;
+    final availability = int.tryParse(_availabilityController.text.trim()) ?? 0;
 
     context.read<ProfileCubit>().updateStudentProfile(
-          userId: widget.user.uid,
-          fullName: _nameController.text,
-          campus: _campusController.text,
-          program: _programController.text,
-          bio: _bioController.text,
-          skills: _parseSkills(_skillsController.text),
-          availabilityHours: availability,
-          portfolioUrl: _portfolioController.text,
-          linkedInUrl: _linkedInController.text,
-          githubUrl: _githubController.text,
-        );
+      userId: widget.user.uid,
+      fullName: _nameController.text,
+      campus: _campusController.text,
+      program: _programController.text,
+      bio: _bioController.text,
+      skills: _parseSkills(_skillsController.text),
+      availabilityHours: availability,
+      portfolioUrl: _portfolioController.text,
+      linkedInUrl: _linkedInController.text,
+      githubUrl: _githubController.text,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit Student Profile'),
-      ),
+      appBar: AppBar(title: const Text('Edit Student Profile')),
       body: BlocConsumer<ProfileCubit, ProfileState>(
         listener: (context, state) {
           if (state is ProfileSaved) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Profile updated successfully.',
-                ),
-              ),
+              const SnackBar(content: Text('Profile updated successfully.')),
             );
 
             context.read<ProfileCubit>().reset();
@@ -162,11 +139,9 @@ class _EditStudentProfileScreenState
           }
 
           if (state is ProfileFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-              ),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
@@ -174,17 +149,11 @@ class _EditStudentProfileScreenState
 
           return SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(
-                24,
-                12,
-                24,
-                32,
-              ),
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
               child: Form(
                 key: _formKey,
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
                       'Build your opportunity profile',
@@ -206,16 +175,13 @@ class _EditStudentProfileScreenState
 
                     TextFormField(
                       controller: _nameController,
-                      textCapitalization:
-                          TextCapitalization.words,
+                      textCapitalization: TextCapitalization.words,
                       decoration: const InputDecoration(
                         labelText: 'Full name',
-                        prefixIcon:
-                            Icon(Icons.person_outline),
+                        prefixIcon: Icon(Icons.person_outline),
                       ),
                       validator: (value) {
-                        if (value == null ||
-                            value.trim().length < 2) {
+                        if (value == null || value.trim().length < 2) {
                           return 'Enter your full name.';
                         }
 
@@ -227,18 +193,14 @@ class _EditStudentProfileScreenState
 
                     TextFormField(
                       controller: _programController,
-                      textCapitalization:
-                          TextCapitalization.words,
+                      textCapitalization: TextCapitalization.words,
                       decoration: const InputDecoration(
                         labelText: 'Academic program',
-                        hintText:
-                            'Example: Software Engineering',
-                        prefixIcon:
-                            Icon(Icons.school_outlined),
+                        hintText: 'Example: Software Engineering',
+                        prefixIcon: Icon(Icons.school_outlined),
                       ),
                       validator: (value) {
-                        if (value == null ||
-                            value.trim().length < 2) {
+                        if (value == null || value.trim().length < 2) {
                           return 'Enter your academic program.';
                         }
 
@@ -250,17 +212,14 @@ class _EditStudentProfileScreenState
 
                     TextFormField(
                       controller: _campusController,
-                      textCapitalization:
-                          TextCapitalization.words,
+                      textCapitalization: TextCapitalization.words,
                       decoration: const InputDecoration(
                         labelText: 'Campus',
                         hintText: 'Example: ALU Rwanda',
-                        prefixIcon:
-                            Icon(Icons.location_city_outlined),
+                        prefixIcon: Icon(Icons.location_city_outlined),
                       ),
                       validator: (value) {
-                        if (value == null ||
-                            value.trim().length < 2) {
+                        if (value == null || value.trim().length < 2) {
                           return 'Enter your campus.';
                         }
 
@@ -281,8 +240,7 @@ class _EditStudentProfileScreenState
                         alignLabelWithHint: true,
                       ),
                       validator: (value) {
-                        if (value == null ||
-                            value.trim().length < 30) {
+                        if (value == null || value.trim().length < 30) {
                           return 'Write at least 30 characters.';
                         }
 
@@ -296,10 +254,8 @@ class _EditStudentProfileScreenState
                       controller: _skillsController,
                       decoration: const InputDecoration(
                         labelText: 'Skills',
-                        hintText:
-                            'Flutter, Firebase, UI Design',
-                        prefixIcon:
-                            Icon(Icons.auto_awesome_outlined),
+                        hintText: 'Flutter, Firebase, UI Design',
+                        prefixIcon: Icon(Icons.auto_awesome_outlined),
                       ),
                       validator: (value) {
                         if (_parseSkills(value ?? '').isEmpty) {
@@ -316,18 +272,13 @@ class _EditStudentProfileScreenState
                       controller: _availabilityController,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                        labelText:
-                            'Available hours per week',
-                        prefixIcon:
-                            Icon(Icons.schedule_outlined),
+                        labelText: 'Available hours per week',
+                        prefixIcon: Icon(Icons.schedule_outlined),
                       ),
                       validator: (value) {
-                        final hours =
-                            int.tryParse(value?.trim() ?? '');
+                        final hours = int.tryParse(value?.trim() ?? '');
 
-                        if (hours == null ||
-                            hours < 1 ||
-                            hours > 60) {
+                        if (hours == null || hours < 1 || hours > 60) {
                           return 'Enter a value between 1 and 60.';
                         }
 
@@ -343,8 +294,7 @@ class _EditStudentProfileScreenState
                       decoration: const InputDecoration(
                         labelText: 'Portfolio link',
                         hintText: 'Optional',
-                        prefixIcon:
-                            Icon(Icons.language_outlined),
+                        prefixIcon: Icon(Icons.language_outlined),
                       ),
                       validator: _validateOptionalUrl,
                     ),
@@ -357,8 +307,7 @@ class _EditStudentProfileScreenState
                       decoration: const InputDecoration(
                         labelText: 'LinkedIn link',
                         hintText: 'Optional',
-                        prefixIcon:
-                            Icon(Icons.business_center_outlined),
+                        prefixIcon: Icon(Icons.business_center_outlined),
                       ),
                       validator: _validateOptionalUrl,
                     ),
@@ -384,8 +333,7 @@ class _EditStudentProfileScreenState
                           ? const SizedBox(
                               width: 22,
                               height: 22,
-                              child:
-                                  CircularProgressIndicator(
+                              child: CircularProgressIndicator(
                                 strokeWidth: 2.5,
                                 color: Colors.white,
                               ),

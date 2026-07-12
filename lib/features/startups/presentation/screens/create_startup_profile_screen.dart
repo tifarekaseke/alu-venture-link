@@ -82,9 +82,7 @@ class _CreateStartupProfileScreenState
       text: profile?.recognitionReference ?? '',
     );
 
-    _websiteController = TextEditingController(
-      text: profile?.website ?? '',
-    );
+    _websiteController = TextEditingController(text: profile?.website ?? '');
 
     _industry = profile?.industry.isNotEmpty == true
         ? profile!.industry
@@ -120,16 +118,15 @@ class _CreateStartupProfileScreenState
     });
 
     final success = await context.read<StartupCubit>().submitProfile(
-          owner: widget.user,
-          startupName: _startupNameController.text,
-          description: _descriptionController.text,
-          industry: _industry,
-          ventureStage: _ventureStage,
-          recognitionType: _recognitionType,
-          recognitionReference:
-              _recognitionReferenceController.text,
-          website: _websiteController.text,
-        );
+      owner: widget.user,
+      startupName: _startupNameController.text,
+      description: _descriptionController.text,
+      industry: _industry,
+      ventureStage: _ventureStage,
+      recognitionType: _recognitionType,
+      recognitionReference: _recognitionReferenceController.text,
+      website: _websiteController.text,
+    );
 
     if (!mounted) {
       return;
@@ -142,9 +139,7 @@ class _CreateStartupProfileScreenState
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Startup profile submitted for verification.',
-          ),
+          content: Text('Startup profile submitted for verification.'),
         ),
       );
 
@@ -154,38 +149,29 @@ class _CreateStartupProfileScreenState
 
   @override
   Widget build(BuildContext context) {
-    final isResubmission =
-        widget.existingProfile?.isRejected == true;
+    final isResubmission = widget.existingProfile?.isRejected == true;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          isResubmission
-              ? 'Update Startup Profile'
-              : 'Create Startup Profile',
+          isResubmission ? 'Update Startup Profile' : 'Create Startup Profile',
         ),
       ),
       body: BlocListener<StartupCubit, StartupState>(
         listener: (context, state) {
           if (state is StartupFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(
-              24,
-              12,
-              24,
-              32,
-            ),
+            padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
             child: Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'ALU startup verification',
@@ -206,16 +192,13 @@ class _CreateStartupProfileScreenState
                   const SizedBox(height: 28),
                   TextFormField(
                     controller: _startupNameController,
-                    textCapitalization:
-                        TextCapitalization.words,
+                    textCapitalization: TextCapitalization.words,
                     decoration: const InputDecoration(
                       labelText: 'Startup name',
-                      prefixIcon:
-                          Icon(Icons.rocket_launch_outlined),
+                      prefixIcon: Icon(Icons.rocket_launch_outlined),
                     ),
                     validator: (value) {
-                      if (value == null ||
-                          value.trim().length < 2) {
+                      if (value == null || value.trim().length < 2) {
                         return 'Enter the startup name.';
                       }
 
@@ -234,8 +217,7 @@ class _CreateStartupProfileScreenState
                       alignLabelWithHint: true,
                     ),
                     validator: (value) {
-                      if (value == null ||
-                          value.trim().length < 40) {
+                      if (value == null || value.trim().length < 40) {
                         return 'Write at least 40 characters.';
                       }
 
@@ -247,8 +229,7 @@ class _CreateStartupProfileScreenState
                     initialValue: _industry,
                     decoration: const InputDecoration(
                       labelText: 'Industry',
-                      prefixIcon:
-                          Icon(Icons.category_outlined),
+                      prefixIcon: Icon(Icons.category_outlined),
                     ),
                     items: _industries.map((industry) {
                       return DropdownMenuItem<String>(
@@ -271,8 +252,7 @@ class _CreateStartupProfileScreenState
                     initialValue: _ventureStage,
                     decoration: const InputDecoration(
                       labelText: 'Venture stage',
-                      prefixIcon:
-                          Icon(Icons.trending_up_outlined),
+                      prefixIcon: Icon(Icons.trending_up_outlined),
                     ),
                     items: _ventureStages.map((stage) {
                       return DropdownMenuItem<String>(
@@ -295,11 +275,9 @@ class _CreateStartupProfileScreenState
                     initialValue: _recognitionType,
                     decoration: const InputDecoration(
                       labelText: 'ALU recognition type',
-                      prefixIcon:
-                          Icon(Icons.verified_outlined),
+                      prefixIcon: Icon(Icons.verified_outlined),
                     ),
-                    items:
-                        _recognitionTypes.map((recognition) {
+                    items: _recognitionTypes.map((recognition) {
                       return DropdownMenuItem<String>(
                         value: recognition,
                         child: Text(recognition),
@@ -317,8 +295,7 @@ class _CreateStartupProfileScreenState
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
-                    controller:
-                        _recognitionReferenceController,
+                    controller: _recognitionReferenceController,
                     minLines: 2,
                     maxLines: 4,
                     decoration: const InputDecoration(
@@ -326,12 +303,10 @@ class _CreateStartupProfileScreenState
                       hintText:
                           'Example: Venture Lab Cohort 2026, faculty name, or ALU programme reference.',
                       alignLabelWithHint: true,
-                      prefixIcon:
-                          Icon(Icons.badge_outlined),
+                      prefixIcon: Icon(Icons.badge_outlined),
                     ),
                     validator: (value) {
-                      if (value == null ||
-                          value.trim().length < 5) {
+                      if (value == null || value.trim().length < 5) {
                         return 'Provide an ALU recognition reference.';
                       }
 
@@ -350,14 +325,12 @@ class _CreateStartupProfileScreenState
                   ),
                   const SizedBox(height: 28),
                   ElevatedButton(
-                    onPressed:
-                        _isSubmitting ? null : _submit,
+                    onPressed: _isSubmitting ? null : _submit,
                     child: _isSubmitting
                         ? const SizedBox(
                             width: 22,
                             height: 22,
-                            child:
-                                CircularProgressIndicator(
+                            child: CircularProgressIndicator(
                               strokeWidth: 2.5,
                               color: Colors.white,
                             ),

@@ -31,32 +31,22 @@ class StartupDashboardScreen extends StatefulWidget {
   });
 
   @override
-  State<StartupDashboardScreen> createState() =>
-      _StartupDashboardScreenState();
+  State<StartupDashboardScreen> createState() => _StartupDashboardScreenState();
 }
 
-class _StartupDashboardScreenState
-    extends State<StartupDashboardScreen> {
+class _StartupDashboardScreenState extends State<StartupDashboardScreen> {
   @override
   void initState() {
     super.initState();
 
-    context
-        .read<StartupCubit>()
-        .watchStartupProfile(widget.user.uid);
+    context.read<StartupCubit>().watchStartupProfile(widget.user.uid);
 
-    context
-        .read<OpportunityCubit>()
-        .watchStartupOpportunities(widget.user.uid);
+    context.read<OpportunityCubit>().watchStartupOpportunities(widget.user.uid);
 
-    context
-        .read<NotificationCubit>()
-        .watchNotifications(widget.user.uid);
+    context.read<NotificationCubit>().watchNotifications(widget.user.uid);
   }
 
-  Future<void> _openProfileForm({
-    StartupProfileModel? profile,
-  }) async {
+  Future<void> _openProfileForm({StartupProfileModel? profile}) async {
     await Navigator.of(context).push<bool>(
       MaterialPageRoute<bool>(
         builder: (_) => CreateStartupProfileScreen(
@@ -70,16 +60,12 @@ class _StartupDashboardScreenState
   void _openNotifications() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => NotificationsScreen(
-          user: widget.user,
-        ),
+        builder: (_) => NotificationsScreen(user: widget.user),
       ),
     );
   }
 
-  void _openCreateOpportunity(
-    StartupProfileModel profile,
-  ) {
+  void _openCreateOpportunity(StartupProfileModel profile) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => CreateOpportunityScreen(
@@ -95,21 +81,16 @@ class _StartupDashboardScreenState
     return BlocConsumer<StartupCubit, StartupState>(
       listener: (context, state) {
         if (state is StartupFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-            ),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
       builder: (context, state) {
-        if (state is StartupInitial ||
-            state is StartupLoading) {
+        if (state is StartupInitial || state is StartupLoading) {
           return Scaffold(
             appBar: _appBar(),
-            body: const Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: const Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -142,47 +123,31 @@ class _StartupDashboardScreenState
                 : null,
             body: RefreshIndicator(
               onRefresh: () async {
-                context
-                    .read<StartupCubit>()
-                    .watchStartupProfile(
-                      widget.user.uid,
-                    );
-
-                context
-                    .read<OpportunityCubit>()
-                    .watchStartupOpportunities(
-                      widget.user.uid,
-                    );
-
-                await Future<void>.delayed(
-                  const Duration(milliseconds: 500),
+                context.read<StartupCubit>().watchStartupProfile(
+                  widget.user.uid,
                 );
+
+                context.read<OpportunityCubit>().watchStartupOpportunities(
+                  widget.user.uid,
+                );
+
+                await Future<void>.delayed(const Duration(milliseconds: 500));
               },
               child: ListView(
-                physics:
-                    const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(
-                  20,
-                  16,
-                  20,
-                  100,
-                ),
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
                 children: [
                   _DashboardHero(
                     profile: profile,
-                    onOpenProfile:
-                        widget.onOpenProfile,
+                    onOpenProfile: widget.onOpenProfile,
                   ),
 
                   const SizedBox(height: 20),
 
                   _QuickActions(
-                    onOpenApplicants:
-                        widget.onOpenApplicants,
-                    onOpenAnalytics:
-                        widget.onOpenAnalytics,
-                    onOpenProfile:
-                        widget.onOpenProfile,
+                    onOpenApplicants: widget.onOpenApplicants,
+                    onOpenAnalytics: widget.onOpenAnalytics,
+                    onOpenProfile: widget.onOpenProfile,
                   ),
 
                   const SizedBox(height: 22),
@@ -190,9 +155,7 @@ class _StartupDashboardScreenState
                   _VerificationStatusCard(
                     profile: profile,
                     onUpdate: () {
-                      _openProfileForm(
-                        profile: profile,
-                      );
+                      _openProfileForm(profile: profile);
                     },
                   ),
 
@@ -205,8 +168,7 @@ class _StartupDashboardScreenState
                           'Your opportunities',
                           style: TextStyle(
                             fontSize: 21,
-                            fontWeight:
-                                FontWeight.w800,
+                            fontWeight: FontWeight.w800,
                             color: AppTheme.navy,
                           ),
                         ),
@@ -214,13 +176,9 @@ class _StartupDashboardScreenState
                       if (profile.isApproved)
                         TextButton.icon(
                           onPressed: () {
-                            _openCreateOpportunity(
-                              profile,
-                            );
+                            _openCreateOpportunity(profile);
                           },
-                          icon: const Icon(
-                            Icons.add,
-                          ),
+                          icon: const Icon(Icons.add),
                           label: const Text('New role'),
                         ),
                     ],
@@ -228,104 +186,67 @@ class _StartupDashboardScreenState
 
                   const SizedBox(height: 12),
 
-                  BlocBuilder<OpportunityCubit,
-                      OpportunityState>(
+                  BlocBuilder<OpportunityCubit, OpportunityState>(
                     builder: (context, opportunityState) {
-                      if (opportunityState
-                              is OpportunityLoading ||
-                          opportunityState
-                              is OpportunityInitial) {
+                      if (opportunityState is OpportunityLoading ||
+                          opportunityState is OpportunityInitial) {
                         return const Center(
                           child: Padding(
                             padding: EdgeInsets.all(28),
-                            child:
-                                CircularProgressIndicator(),
+                            child: CircularProgressIndicator(),
                           ),
                         );
                       }
 
-                      if (opportunityState
-                              is OpportunityLoaded &&
-                          opportunityState
-                              .opportunities.isEmpty) {
+                      if (opportunityState is OpportunityLoaded &&
+                          opportunityState.opportunities.isEmpty) {
                         return _EmptyOpportunityState(
                           approved: profile.isApproved,
                           onCreate: () {
-                            _openCreateOpportunity(
-                              profile,
-                            );
+                            _openCreateOpportunity(profile);
                           },
                         );
                       }
 
-                      if (opportunityState
-                          is OpportunityLoaded) {
+                      if (opportunityState is OpportunityLoaded) {
                         return Column(
-                          children: opportunityState
-                              .opportunities
+                          children: opportunityState.opportunities
                               .map(
-                                (opportunity) =>
-                                    OpportunityCard(
-                                  opportunity:
-                                      opportunity,
-                                  trailing:
-                                      PopupMenuButton<String>(
-                                    tooltip:
-                                        'Opportunity actions',
+                                (opportunity) => OpportunityCard(
+                                  opportunity: opportunity,
+                                  trailing: PopupMenuButton<String>(
+                                    tooltip: 'Opportunity actions',
                                     onSelected: (value) {
                                       final cubit = context
-                                          .read<
-                                              OpportunityCubit>();
+                                          .read<OpportunityCubit>();
 
-                                      if (value ==
-                                          'close') {
-                                        cubit
-                                            .closeOpportunity(
-                                          opportunity.id,
-                                        );
+                                      if (value == 'close') {
+                                        cubit.closeOpportunity(opportunity.id);
                                       }
 
-                                      if (value ==
-                                          'reopen') {
-                                        cubit
-                                            .reopenOpportunity(
-                                          opportunity.id,
-                                        );
+                                      if (value == 'reopen') {
+                                        cubit.reopenOpportunity(opportunity.id);
                                       }
 
-                                      if (value ==
-                                          'delete') {
-                                        cubit
-                                            .deleteOpportunity(
-                                          opportunity.id,
-                                        );
+                                      if (value == 'delete') {
+                                        cubit.deleteOpportunity(opportunity.id);
                                       }
                                     },
                                     itemBuilder: (context) {
                                       return [
-                                        if (opportunity
-                                                .status ==
-                                            'open')
+                                        if (opportunity.status == 'open')
                                           const PopupMenuItem(
                                             value: 'close',
-                                            child: Text(
-                                              'Close opportunity',
-                                            ),
+                                            child: Text('Close opportunity'),
                                           ),
-                                        if (opportunity
-                                                .status ==
-                                            'closed')
+                                        if (opportunity.status == 'closed')
                                           const PopupMenuItem(
                                             value: 'reopen',
-                                            child: Text(
-                                              'Reopen opportunity',
-                                            ),
+                                            child: Text('Reopen opportunity'),
                                           ),
                                         const PopupMenuItem(
                                           value: 'delete',
-                                          child: Text(
-                                            'Delete opportunity',
-                                          ),
+                                          child: Text('Delete opportunity'),
                                         ),
                                       ];
                                     },
@@ -336,11 +257,9 @@ class _StartupDashboardScreenState
                         );
                       }
 
-                      if (opportunityState
-                          is OpportunityFailure) {
+                      if (opportunityState is OpportunityFailure) {
                         return _DashboardError(
-                          message:
-                              opportunityState.message,
+                          message: opportunityState.message,
                         );
                       }
 
@@ -359,19 +278,13 @@ class _StartupDashboardScreenState
             body: Center(
               child: Padding(
                 padding: const EdgeInsets.all(28),
-                child: Text(
-                  state.message,
-                  textAlign: TextAlign.center,
-                ),
+                child: Text(state.message, textAlign: TextAlign.center),
               ),
             ),
           );
         }
 
-        return Scaffold(
-          appBar: _appBar(),
-          body: const SizedBox.shrink(),
-        );
+        return Scaffold(appBar: _appBar(), body: const SizedBox.shrink());
       },
     );
   }
@@ -380,9 +293,7 @@ class _StartupDashboardScreenState
     return AppBar(
       title: const Text('Startup Dashboard'),
       actions: [
-        NotificationBell(
-          onPressed: _openNotifications,
-        ),
+        NotificationBell(onPressed: _openNotifications),
         IconButton(
           tooltip: 'Sign out',
           onPressed: () {
@@ -399,10 +310,7 @@ class _DashboardHero extends StatelessWidget {
   final StartupProfileModel profile;
   final VoidCallback onOpenProfile;
 
-  const _DashboardHero({
-    required this.profile,
-    required this.onOpenProfile,
-  });
+  const _DashboardHero({required this.profile, required this.onOpenProfile});
 
   @override
   Widget build(BuildContext context) {
@@ -413,8 +321,7 @@ class _DashboardHero extends StatelessWidget {
         borderRadius: BorderRadius.circular(26),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -434,8 +341,7 @@ class _DashboardHero extends StatelessWidget {
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -445,8 +351,7 @@ class _DashboardHero extends StatelessWidget {
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 22,
-                              fontWeight:
-                                  FontWeight.w800,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ),
@@ -463,9 +368,7 @@ class _DashboardHero extends StatelessWidget {
                     const SizedBox(height: 5),
                     Text(
                       '${profile.industry} • ${profile.ventureStage}',
-                      style: const TextStyle(
-                        color: Colors.white70,
-                      ),
+                      style: const TextStyle(color: Colors.white70),
                     ),
                   ],
                 ),
@@ -477,10 +380,7 @@ class _DashboardHero extends StatelessWidget {
             profile.description,
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Colors.white70,
-              height: 1.5,
-            ),
+            style: const TextStyle(color: Colors.white70, height: 1.5),
           ),
           const SizedBox(height: 18),
           TextButton.icon(
@@ -489,12 +389,8 @@ class _DashboardHero extends StatelessWidget {
               foregroundColor: AppTheme.gold,
               padding: EdgeInsets.zero,
             ),
-            icon: const Icon(
-              Icons.arrow_forward,
-            ),
-            label: const Text(
-              'View startup profile',
-            ),
+            icon: const Icon(Icons.arrow_forward),
+            label: const Text('View startup profile'),
           ),
         ],
       ),
@@ -517,8 +413,7 @@ class _QuickActions extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final width =
-            (constraints.maxWidth - 20) / 3;
+        final width = (constraints.maxWidth - 20) / 3;
 
         return Row(
           children: [
@@ -575,22 +470,14 @@ class _QuickActionCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(18),
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 8,
-            vertical: 16,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: const Color(0xFFE4E7EC),
-            ),
+            border: Border.all(color: const Color(0xFFE4E7EC)),
           ),
           child: Column(
             children: [
-              Icon(
-                icon,
-                color: AppTheme.purple,
-              ),
+              Icon(icon, color: AppTheme.purple),
               const SizedBox(height: 9),
               Text(
                 label,
@@ -631,8 +518,7 @@ class _VerificationStatusCard extends StatelessWidget {
       foreground = Colors.green.shade700;
       icon = Icons.verified;
       title = 'Verified ALU startup';
-      message =
-          'Your venture can publish opportunities and manage applicants.';
+      message = 'Your venture can publish opportunities and manage applicants.';
     } else if (profile.isRejected) {
       background = const Color(0xFFFFEEEE);
       foreground = Colors.red.shade700;
@@ -657,15 +543,11 @@ class _VerificationStatusCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                icon,
-                color: foreground,
-              ),
+              Icon(icon, color: foreground),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -680,20 +562,12 @@ class _VerificationStatusCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          Text(
-            message,
-            style: TextStyle(
-              color: foreground,
-              height: 1.45,
-            ),
-          ),
+          Text(message, style: TextStyle(color: foreground, height: 1.45)),
           if (profile.isRejected) ...[
             const SizedBox(height: 16),
             OutlinedButton(
               onPressed: onUpdate,
-              child: const Text(
-                'Update and resubmit',
-              ),
+              child: const Text('Update and resubmit'),
             ),
           ],
         ],
@@ -705,9 +579,7 @@ class _VerificationStatusCard extends StatelessWidget {
 class _MissingProfileView extends StatelessWidget {
   final VoidCallback onCreate;
 
-  const _MissingProfileView({
-    required this.onCreate,
-  });
+  const _MissingProfileView({required this.onCreate});
 
   @override
   Widget build(BuildContext context) {
@@ -736,17 +608,12 @@ class _MissingProfileView extends StatelessWidget {
             const Text(
               'Provide your venture information and submit it for ALU verification.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppTheme.textSecondary,
-                height: 1.5,
-              ),
+              style: TextStyle(color: AppTheme.textSecondary, height: 1.5),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: onCreate,
-              child: const Text(
-                'Create startup profile',
-              ),
+              child: const Text('Create startup profile'),
             ),
           ],
         ),
@@ -771,17 +638,11 @@ class _EmptyOpportunityState extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: const Color(0xFFE4E7EC),
-        ),
+        border: Border.all(color: const Color(0xFFE4E7EC)),
       ),
       child: Column(
         children: [
-          const Icon(
-            Icons.work_outline,
-            size: 46,
-            color: AppTheme.purple,
-          ),
+          const Icon(Icons.work_outline, size: 46, color: AppTheme.purple),
           const SizedBox(height: 14),
           Text(
             approved
@@ -800,19 +661,14 @@ class _EmptyOpportunityState extends StatelessWidget {
                 ? 'Create your first role and begin receiving student applications.'
                 : 'Complete verification before publishing opportunities.',
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppTheme.textSecondary,
-              height: 1.5,
-            ),
+            style: const TextStyle(color: AppTheme.textSecondary, height: 1.5),
           ),
           if (approved) ...[
             const SizedBox(height: 18),
             ElevatedButton.icon(
               onPressed: onCreate,
               icon: const Icon(Icons.add),
-              label: const Text(
-                'Create opportunity',
-              ),
+              label: const Text('Create opportunity'),
             ),
           ],
         ],
@@ -824,9 +680,7 @@ class _EmptyOpportunityState extends StatelessWidget {
 class _DashboardError extends StatelessWidget {
   final String message;
 
-  const _DashboardError({
-    required this.message,
-  });
+  const _DashboardError({required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -839,10 +693,7 @@ class _DashboardError extends StatelessWidget {
       child: Text(
         message,
         textAlign: TextAlign.center,
-        style: TextStyle(
-          color: Colors.red.shade700,
-          height: 1.5,
-        ),
+        style: TextStyle(color: Colors.red.shade700, height: 1.5),
       ),
     );
   }

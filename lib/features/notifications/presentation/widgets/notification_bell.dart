@@ -8,17 +8,13 @@ import '../cubit/notification_state.dart';
 class NotificationBell extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const NotificationBell({
-    required this.onPressed,
-    super.key,
-  });
+  const NotificationBell({required this.onPressed, super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<NotificationCubit, NotificationState>(
       builder: (context, state) {
-        final unreadCount =
-            state is NotificationLoaded ? state.unreadCount : 0;
+        final unreadCount = state is NotificationLoaded ? state.unreadCount : 0;
 
         return Stack(
           clipBehavior: Clip.none,
@@ -41,22 +37,15 @@ class NotificationBell extends StatelessWidget {
                     minWidth: 17,
                     minHeight: 17,
                   ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
                     color: AppTheme.purple,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 1.5,
-                    ),
+                    border: Border.all(color: Colors.white, width: 1.5),
                   ),
                   alignment: Alignment.center,
                   child: Text(
-                    unreadCount > 99
-                        ? '99+'
-                        : unreadCount.toString(),
+                    unreadCount > 99 ? '99+' : unreadCount.toString(),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 9,

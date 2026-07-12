@@ -47,10 +47,10 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
     });
 
     await context.read<ApplicationCubit>().submitApplication(
-          student: widget.student,
-          opportunity: widget.opportunity,
-          coverLetter: _coverLetterController.text,
-        );
+      student: widget.student,
+      opportunity: widget.opportunity,
+      coverLetter: _coverLetterController.text,
+    );
 
     if (!mounted) {
       return;
@@ -68,21 +68,19 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
         : DateFormat('dd MMM yyyy').format(widget.opportunity.deadline!);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Opportunity Details'),
-      ),
+      appBar: AppBar(title: const Text('Opportunity Details')),
       body: BlocListener<ApplicationCubit, ApplicationState>(
         listener: (context, state) {
           if (state is ApplicationFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
 
           if (state is ApplicationActionSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
 
             Navigator.of(context).pop();
           }

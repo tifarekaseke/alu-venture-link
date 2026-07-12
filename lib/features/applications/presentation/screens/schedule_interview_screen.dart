@@ -7,32 +7,25 @@ import '../../data/models/application_model.dart';
 import '../cubit/application_cubit.dart';
 import '../cubit/application_state.dart';
 
-class ScheduleInterviewScreen
-    extends StatefulWidget {
+class ScheduleInterviewScreen extends StatefulWidget {
   final ApplicationModel application;
 
-  const ScheduleInterviewScreen({
-    required this.application,
-    super.key,
-  });
+  const ScheduleInterviewScreen({required this.application, super.key});
 
   @override
   State<ScheduleInterviewScreen> createState() =>
       _ScheduleInterviewScreenState();
 }
 
-class _ScheduleInterviewScreenState
-    extends State<ScheduleInterviewScreen> {
+class _ScheduleInterviewScreenState extends State<ScheduleInterviewScreen> {
   final _formKey = GlobalKey<FormState>();
 
   late DateTime _selectedDate;
   late TimeOfDay _selectedTime;
 
-  late final TextEditingController
-      _locationController;
+  late final TextEditingController _locationController;
 
-  late final TextEditingController
-      _notesController;
+  late final TextEditingController _notesController;
 
   String _interviewMode = 'Google Meet';
   bool _isSaving = false;
@@ -49,13 +42,10 @@ class _ScheduleInterviewScreenState
   void initState() {
     super.initState();
 
-    final existingDate =
-        widget.application.interviewDateTime;
+    final existingDate = widget.application.interviewDateTime;
 
-    final initialDate = existingDate ??
-        DateTime.now().add(
-          const Duration(days: 1),
-        );
+    final initialDate =
+        existingDate ?? DateTime.now().add(const Duration(days: 1));
 
     _selectedDate = DateTime(
       initialDate.year,
@@ -63,21 +53,16 @@ class _ScheduleInterviewScreenState
       initialDate.day,
     );
 
-    _selectedTime = TimeOfDay.fromDateTime(
-      initialDate,
-    );
+    _selectedTime = TimeOfDay.fromDateTime(initialDate);
 
-    final existingMode =
-        widget.application.interviewMode;
+    final existingMode = widget.application.interviewMode;
 
     if (_modes.contains(existingMode)) {
       _interviewMode = existingMode;
     }
 
-    _locationController =
-        TextEditingController(
-      text: widget
-          .application.interviewLocationOrLink,
+    _locationController = TextEditingController(
+      text: widget.application.interviewLocationOrLink,
     );
 
     _notesController = TextEditingController(
@@ -107,9 +92,7 @@ class _ScheduleInterviewScreenState
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(
-        const Duration(days: 365),
-      ),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
     );
 
     if (selected == null) {
@@ -169,17 +152,12 @@ class _ScheduleInterviewScreenState
       return;
     }
 
-    final interviewDateTime =
-        _combinedDateTime;
+    final interviewDateTime = _combinedDateTime;
 
-    if (interviewDateTime.isBefore(
-      DateTime.now(),
-    )) {
+    if (interviewDateTime.isBefore(DateTime.now())) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Choose a future interview date and time.',
-          ),
+          content: Text('Choose a future interview date and time.'),
         ),
       );
 
@@ -190,18 +168,13 @@ class _ScheduleInterviewScreenState
       _isSaving = true;
     });
 
-    final success = await context
-        .read<ApplicationCubit>()
-        .scheduleInterview(
-          applicationId:
-              widget.application.id,
-          interviewDateTime:
-              interviewDateTime,
-          interviewMode: _interviewMode,
-          locationOrLink:
-              _locationController.text,
-          notes: _notesController.text,
-        );
+    final success = await context.read<ApplicationCubit>().scheduleInterview(
+      applicationId: widget.application.id,
+      interviewDateTime: interviewDateTime,
+      interviewMode: _interviewMode,
+      locationOrLink: _locationController.text,
+      notes: _notesController.text,
+    );
 
     if (!mounted) {
       return;
@@ -228,12 +201,11 @@ class _ScheduleInterviewScreenState
 
   @override
   Widget build(BuildContext context) {
-    final selectedDateText =
-        DateFormat('EEE, dd MMM yyyy')
-            .format(_selectedDate);
+    final selectedDateText = DateFormat(
+      'EEE, dd MMM yyyy',
+    ).format(_selectedDate);
 
-    final selectedTimeText =
-        _selectedTime.format(context);
+    final selectedTimeText = _selectedTime.format(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -243,45 +215,31 @@ class _ScheduleInterviewScreenState
               : 'Schedule Interview',
         ),
       ),
-      body: BlocListener<
-          ApplicationCubit,
-          ApplicationState>(
+      body: BlocListener<ApplicationCubit, ApplicationState>(
         listener: (context, state) {
           if (state is ApplicationFailure) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-              ),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(
-              24,
-              16,
-              24,
-              32,
-            ),
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
             child: Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     width: double.infinity,
-                    padding:
-                        const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: AppTheme.navy,
-                      borderRadius:
-                          BorderRadius.circular(22),
+                      borderRadius: BorderRadius.circular(22),
                     ),
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Icon(
                           Icons.video_call_outlined,
@@ -290,27 +248,21 @@ class _ScheduleInterviewScreenState
                         ),
                         const SizedBox(height: 14),
                         Text(
-                          widget.application
-                              .opportunityTitle,
+                          widget.application.opportunityTitle,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
-                            fontWeight:
-                                FontWeight.w800,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
                         const SizedBox(height: 6),
                         Text(
                           'Candidate: ${widget.application.studentName}',
-                          style: const TextStyle(
-                            color: Colors.white70,
-                          ),
+                          style: const TextStyle(color: Colors.white70),
                         ),
                         Text(
                           widget.application.studentEmail,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                          ),
+                          style: const TextStyle(color: Colors.white70),
                         ),
                       ],
                     ),
@@ -329,10 +281,8 @@ class _ScheduleInterviewScreenState
 
                   DropdownButtonFormField<String>(
                     initialValue: _interviewMode,
-                    decoration:
-                        const InputDecoration(
-                      prefixIcon:
-                          Icon(Icons.meeting_room_outlined),
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.meeting_room_outlined),
                     ),
                     items: _modes.map((mode) {
                       return DropdownMenuItem<String>(
@@ -368,21 +318,15 @@ class _ScheduleInterviewScreenState
                       Expanded(
                         child: InkWell(
                           onTap: _selectDate,
-                          borderRadius:
-                              BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16),
                           child: InputDecorator(
-                            decoration:
-                                const InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Date',
-                              prefixIcon: Icon(
-                                Icons
-                                    .calendar_month_outlined,
-                              ),
+                              prefixIcon: Icon(Icons.calendar_month_outlined),
                             ),
                             child: Text(
                               selectedDateText,
-                              overflow:
-                                  TextOverflow.ellipsis,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
@@ -391,19 +335,13 @@ class _ScheduleInterviewScreenState
                       Expanded(
                         child: InkWell(
                           onTap: _selectTime,
-                          borderRadius:
-                              BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16),
                           child: InputDecorator(
-                            decoration:
-                                const InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Time',
-                              prefixIcon: Icon(
-                                Icons.access_time,
-                              ),
+                              prefixIcon: Icon(Icons.access_time),
                             ),
-                            child: Text(
-                              selectedTimeText,
-                            ),
+                            child: Text(selectedTimeText),
                           ),
                         ),
                       ),
@@ -415,30 +353,23 @@ class _ScheduleInterviewScreenState
                   TextFormField(
                     controller: _locationController,
                     keyboardType:
-                        _interviewMode ==
-                                    'In-person' ||
-                                _interviewMode ==
-                                    'Phone call'
-                            ? TextInputType.text
-                            : TextInputType.url,
+                        _interviewMode == 'In-person' ||
+                            _interviewMode == 'Phone call'
+                        ? TextInputType.text
+                        : TextInputType.url,
                     decoration: InputDecoration(
                       labelText: _locationLabel,
                       hintText: _locationHint,
                       prefixIcon: Icon(
-                        _interviewMode ==
-                                'In-person'
-                            ? Icons
-                                .location_on_outlined
-                            : _interviewMode ==
-                                    'Phone call'
-                                ? Icons.phone_outlined
-                                : Icons
-                                    .link_outlined,
+                        _interviewMode == 'In-person'
+                            ? Icons.location_on_outlined
+                            : _interviewMode == 'Phone call'
+                            ? Icons.phone_outlined
+                            : Icons.link_outlined,
                       ),
                     ),
                     validator: (value) {
-                      if (value == null ||
-                          value.trim().length < 3) {
+                      if (value == null || value.trim().length < 3) {
                         return 'Enter the interview location, link, or instructions.';
                       }
 
@@ -452,38 +383,29 @@ class _ScheduleInterviewScreenState
                     controller: _notesController,
                     minLines: 4,
                     maxLines: 7,
-                    decoration:
-                        const InputDecoration(
-                      labelText:
-                          'Interview instructions',
+                    decoration: const InputDecoration(
+                      labelText: 'Interview instructions',
                       hintText:
                           'Explain what the candidate should prepare, who they will meet, and the expected duration.',
                       alignLabelWithHint: true,
-                      prefixIcon: Icon(
-                        Icons.notes_outlined,
-                      ),
+                      prefixIcon: Icon(Icons.notes_outlined),
                     ),
                   ),
 
                   const SizedBox(height: 28),
 
                   ElevatedButton.icon(
-                    onPressed: _isSaving
-                        ? null
-                        : _saveInterview,
+                    onPressed: _isSaving ? null : _saveInterview,
                     icon: _isSaving
                         ? const SizedBox(
                             width: 20,
                             height: 20,
-                            child:
-                                CircularProgressIndicator(
+                            child: CircularProgressIndicator(
                               strokeWidth: 2.5,
                               color: Colors.white,
                             ),
                           )
-                        : const Icon(
-                            Icons.event_available,
-                          ),
+                        : const Icon(Icons.event_available),
                     label: Text(
                       widget.application.hasInterview
                           ? 'Update interview'

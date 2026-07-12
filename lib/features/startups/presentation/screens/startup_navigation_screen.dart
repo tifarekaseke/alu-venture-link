@@ -9,18 +9,14 @@ import 'startup_profile_screen.dart';
 class StartupNavigationScreen extends StatefulWidget {
   final AppUser user;
 
-  const StartupNavigationScreen({
-    required this.user,
-    super.key,
-  });
+  const StartupNavigationScreen({required this.user, super.key});
 
   @override
   State<StartupNavigationScreen> createState() =>
       _StartupNavigationScreenState();
 }
 
-class _StartupNavigationScreenState
-    extends State<StartupNavigationScreen> {
+class _StartupNavigationScreenState extends State<StartupNavigationScreen> {
   int _selectedIndex = 0;
 
   late final List<Widget> _screens;
@@ -42,15 +38,9 @@ class _StartupNavigationScreenState
           _selectDestination(3);
         },
       ),
-      StartupApplicationsScreen(
-        user: widget.user,
-      ),
-      StartupAnalyticsScreen(
-        user: widget.user,
-      ),
-      StartupProfileScreen(
-        user: widget.user,
-      ),
+      StartupApplicationsScreen(user: widget.user),
+      StartupAnalyticsScreen(user: widget.user),
+      StartupProfileScreen(user: widget.user),
     ];
   }
 
@@ -63,10 +53,7 @@ class _StartupNavigationScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: _selectDestination,

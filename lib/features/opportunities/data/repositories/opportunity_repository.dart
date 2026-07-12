@@ -5,9 +5,8 @@ import '../models/opportunity_model.dart';
 class OpportunityRepository {
   final FirebaseFirestore _firestore;
 
-  OpportunityRepository({
-    FirebaseFirestore? firestore,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance;
+  OpportunityRepository({FirebaseFirestore? firestore})
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   CollectionReference<Map<String, dynamic>> get _opportunities {
     return _firestore.collection('opportunities');
@@ -30,9 +29,7 @@ class OpportunityRepository {
     });
   }
 
-  Stream<List<OpportunityModel>> watchStartupOpportunities(
-    String ownerId,
-  ) {
+  Stream<List<OpportunityModel>> watchStartupOpportunities(String ownerId) {
     return _opportunities.snapshots().map((snapshot) {
       final opportunities = snapshot.docs
           .map(OpportunityModel.fromDocument)

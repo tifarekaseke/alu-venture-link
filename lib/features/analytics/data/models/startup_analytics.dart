@@ -27,13 +27,13 @@ class OpportunityPerformance extends Equatable {
 
   @override
   List<Object?> get props => [
-        opportunityId,
-        title,
-        status,
-        applications,
-        interviews,
-        accepted,
-      ];
+    opportunityId,
+    title,
+    status,
+    applications,
+    interviews,
+    accepted,
+  ];
 }
 
 class StartupAnalytics extends Equatable {
@@ -68,10 +68,7 @@ class StartupAnalytics extends Equatable {
   });
 
   int get activePipeline {
-    return submitted +
-        underReview +
-        shortlisted +
-        interviews;
+    return submitted + underReview + shortlisted + interviews;
   }
 
   double get acceptanceRate {
@@ -92,17 +89,17 @@ class StartupAnalytics extends Equatable {
 
   @override
   List<Object?> get props => [
-        totalOpportunities,
-        openOpportunities,
-        closedOpportunities,
-        totalApplications,
-        submitted,
-        underReview,
-        shortlisted,
-        interviews,
-        accepted,
-        rejected,
-        withdrawn,
-        opportunityPerformance,
-      ];
+    totalOpportunities,
+    openOpportunities,
+    closedOpportunities,
+    totalApplications,
+    submitted,
+    underReview,
+    shortlisted,
+    interviews,
+    accepted,
+    rejected,
+    withdrawn,
+    opportunityPerformance,
+  ];
 }

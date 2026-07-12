@@ -29,9 +29,7 @@ class OpportunityCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 14),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(
-          color: Color(0xFFE4E7EC),
-        ),
+        side: const BorderSide(color: Color(0xFFE4E7EC)),
       ),
       child: InkWell(
         onTap: onTap,
@@ -72,9 +70,7 @@ class OpportunityCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           opportunity.startupName,
-                          style: const TextStyle(
-                            color: AppTheme.textSecondary,
-                          ),
+                          style: const TextStyle(color: AppTheme.textSecondary),
                         ),
                       ],
                     ),
@@ -85,9 +81,7 @@ class OpportunityCard extends StatelessWidget {
 
               if (matchPercentage != null) ...[
                 const SizedBox(height: 14),
-                _MatchBadge(
-                  percentage: matchPercentage!,
-                ),
+                _MatchBadge(percentage: matchPercentage!),
               ],
 
               const SizedBox(height: 14),
@@ -110,9 +104,7 @@ class OpportunityCard extends StatelessWidget {
                 children: [
                   _Tag(label: opportunity.opportunityType),
                   _Tag(label: opportunity.workMode),
-                  _Tag(
-                    label: '${opportunity.hoursPerWeek} hrs/week',
-                  ),
+                  _Tag(label: '${opportunity.hoursPerWeek} hrs/week'),
                   _Tag(label: opportunity.status),
                 ],
               ),
@@ -123,11 +115,7 @@ class OpportunityCard extends StatelessWidget {
                   spacing: 8,
                   runSpacing: 8,
                   children: opportunity.requiredSkills
-                      .map(
-                        (skill) => _SkillChip(
-                          label: skill,
-                        ),
-                      )
+                      .map((skill) => _SkillChip(label: skill))
                       .toList(),
                 ),
               ],
@@ -164,9 +152,7 @@ class OpportunityCard extends StatelessWidget {
 class _MatchBadge extends StatelessWidget {
   final int percentage;
 
-  const _MatchBadge({
-    required this.percentage,
-  });
+  const _MatchBadge({required this.percentage});
 
   Color get _foregroundColor {
     if (percentage >= 75) {
@@ -207,10 +193,7 @@ class _MatchBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 9,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
       decoration: BoxDecoration(
         color: _backgroundColor,
         borderRadius: BorderRadius.circular(14),
@@ -218,11 +201,7 @@ class _MatchBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.auto_awesome,
-            size: 17,
-            color: _foregroundColor,
-          ),
+          Icon(Icons.auto_awesome, size: 17, color: _foregroundColor),
           const SizedBox(width: 7),
           Text(
             '$percentage% match',
@@ -234,10 +213,7 @@ class _MatchBadge extends StatelessWidget {
           const SizedBox(width: 7),
           Text(
             '• $_message',
-            style: TextStyle(
-              fontSize: 12,
-              color: _foregroundColor,
-            ),
+            style: TextStyle(fontSize: 12, color: _foregroundColor),
           ),
         ],
       ),
@@ -248,9 +224,7 @@ class _MatchBadge extends StatelessWidget {
 class _Tag extends StatelessWidget {
   final String label;
 
-  const _Tag({
-    required this.label,
-  });
+  const _Tag({required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -259,10 +233,7 @@ class _Tag extends StatelessWidget {
       label: Text(label),
       backgroundColor: const Color(0xFFF2F4F7),
       side: BorderSide.none,
-      labelStyle: const TextStyle(
-        fontSize: 12,
-        color: AppTheme.navy,
-      ),
+      labelStyle: const TextStyle(fontSize: 12, color: AppTheme.navy),
     );
   }
 }
@@ -270,9 +241,7 @@ class _Tag extends StatelessWidget {
 class _SkillChip extends StatelessWidget {
   final String label;
 
-  const _SkillChip({
-    required this.label,
-  });
+  const _SkillChip({required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -281,10 +250,7 @@ class _SkillChip extends StatelessWidget {
       label: Text(label),
       backgroundColor: const Color(0xFFFFF7D6),
       side: BorderSide.none,
-      labelStyle: const TextStyle(
-        fontSize: 12,
-        color: AppTheme.deepNavy,
-      ),
+      labelStyle: const TextStyle(fontSize: 12, color: AppTheme.deepNavy),
     );
   }
 }

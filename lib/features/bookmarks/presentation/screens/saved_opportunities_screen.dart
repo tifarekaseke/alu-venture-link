@@ -11,10 +11,7 @@ import '../cubit/bookmark_state.dart';
 class SavedOpportunitiesScreen extends StatefulWidget {
   final AppUser user;
 
-  const SavedOpportunitiesScreen({
-    required this.user,
-    super.key,
-  });
+  const SavedOpportunitiesScreen({required this.user, super.key});
 
   @override
   State<SavedOpportunitiesScreen> createState() =>
@@ -32,15 +29,13 @@ class _SavedOpportunitiesScreenState extends State<SavedOpportunitiesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Saved Opportunities'),
-      ),
+      appBar: AppBar(title: const Text('Saved Opportunities')),
       body: BlocConsumer<BookmarkCubit, BookmarkState>(
         listener: (context, state) {
           if (state is BookmarkFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
@@ -48,8 +43,7 @@ class _SavedOpportunitiesScreenState extends State<SavedOpportunitiesScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (state is BookmarkLoaded &&
-              state.savedOpportunities.isEmpty) {
+          if (state is BookmarkLoaded && state.savedOpportunities.isEmpty) {
             return const _EmptySavedState();
           }
 
@@ -68,10 +62,7 @@ class _SavedOpportunitiesScreenState extends State<SavedOpportunitiesScreen> {
                 const SizedBox(height: 8),
                 const Text(
                   'Roles you bookmark will appear here for quick access.',
-                  style: TextStyle(
-                    height: 1.5,
-                    color: AppTheme.textSecondary,
-                  ),
+                  style: TextStyle(height: 1.5, color: AppTheme.textSecondary),
                 ),
                 const SizedBox(height: 24),
                 ...state.savedOpportunities.map(
@@ -91,9 +82,9 @@ class _SavedOpportunitiesScreenState extends State<SavedOpportunitiesScreen> {
                       tooltip: 'Remove saved opportunity',
                       onPressed: () {
                         context.read<BookmarkCubit>().removeBookmark(
-                              userId: widget.user.uid,
-                              opportunityId: opportunity.id,
-                            );
+                          userId: widget.user.uid,
+                          opportunityId: opportunity.id,
+                        );
                       },
                       icon: const Icon(Icons.bookmark_remove_outlined),
                     ),
@@ -139,10 +130,7 @@ class _EmptySavedState extends StatelessWidget {
             Text(
               'Tap the bookmark icon on an opportunity to save it here.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                height: 1.5,
-              ),
+              style: TextStyle(color: Colors.grey.shade600, height: 1.5),
             ),
           ],
         ),

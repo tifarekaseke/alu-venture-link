@@ -7,8 +7,7 @@ import 'profile_state.dart';
 class ProfileCubit extends Cubit<ProfileState> {
   final ProfileRepository _profileRepository;
 
-  ProfileCubit(this._profileRepository)
-      : super(const ProfileInitial());
+  ProfileCubit(this._profileRepository) : super(const ProfileInitial());
 
   Future<void> updateStudentProfile({
     required String userId,
@@ -59,19 +58,11 @@ class ProfileCubit extends Cubit<ProfileState> {
           return;
         }
 
-        emit(
-          ProfileFailure(
-            error.message ?? 'A Firebase error occurred.',
-          ),
-        );
+        emit(ProfileFailure(error.message ?? 'A Firebase error occurred.'));
         return;
       }
 
-      emit(
-        const ProfileFailure(
-          'The student profile could not be updated.',
-        ),
-      );
+      emit(const ProfileFailure('The student profile could not be updated.'));
     }
   }
 

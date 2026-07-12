@@ -9,19 +9,15 @@ import '../../data/models/application_model.dart';
 import '../../data/repositories/application_repository.dart';
 import 'application_state.dart';
 
-class ApplicationCubit
-    extends Cubit<ApplicationState> {
+class ApplicationCubit extends Cubit<ApplicationState> {
   final ApplicationRepository _applicationRepository;
 
-  StreamSubscription<List<ApplicationModel>>?
-      _subscription;
+  StreamSubscription<List<ApplicationModel>>? _subscription;
 
   ApplicationCubit(this._applicationRepository)
-      : super(const ApplicationInitial());
+    : super(const ApplicationInitial());
 
-  void watchStudentApplications(
-    String studentId,
-  ) {
+  void watchStudentApplications(String studentId) {
     emit(const ApplicationLoading());
 
     _subscription?.cancel();
@@ -29,22 +25,16 @@ class ApplicationCubit
     _subscription = _applicationRepository
         .watchStudentApplications(studentId)
         .listen(
-      (applications) {
-        emit(ApplicationLoaded(applications));
-      },
-      onError: (Object error) {
-        emit(
-          ApplicationFailure(
-            _friendlyError(error),
-          ),
+          (applications) {
+            emit(ApplicationLoaded(applications));
+          },
+          onError: (Object error) {
+            emit(ApplicationFailure(_friendlyError(error)));
+          },
         );
-      },
-    );
   }
 
-  void watchStartupApplications(
-    String startupOwnerId,
-  ) {
+  void watchStartupApplications(String startupOwnerId) {
     emit(const ApplicationLoading());
 
     _subscription?.cancel();
@@ -52,17 +42,13 @@ class ApplicationCubit
     _subscription = _applicationRepository
         .watchStartupApplications(startupOwnerId)
         .listen(
-      (applications) {
-        emit(ApplicationLoaded(applications));
-      },
-      onError: (Object error) {
-        emit(
-          ApplicationFailure(
-            _friendlyError(error),
-          ),
+          (applications) {
+            emit(ApplicationLoaded(applications));
+          },
+          onError: (Object error) {
+            emit(ApplicationFailure(_friendlyError(error)));
+          },
         );
-      },
-    );
   }
 
   Future<bool> submitApplication({
@@ -71,8 +57,7 @@ class ApplicationCubit
     required String coverLetter,
   }) async {
     try {
-      await _applicationRepository
-          .submitApplication(
+      await _applicationRepository.submitApplication(
         student: student,
         opportunity: opportunity,
         coverLetter: coverLetter,
@@ -80,11 +65,7 @@ class ApplicationCubit
 
       return true;
     } catch (error) {
-      emit(
-        ApplicationFailure(
-          _friendlyError(error),
-        ),
-      );
+      emit(ApplicationFailure(_friendlyError(error)));
 
       return false;
     }
@@ -95,19 +76,14 @@ class ApplicationCubit
     required String status,
   }) async {
     try {
-      await _applicationRepository
-          .updateApplicationStatus(
+      await _applicationRepository.updateApplicationStatus(
         applicationId: applicationId,
         status: status,
       );
 
       return true;
     } catch (error) {
-      emit(
-        ApplicationFailure(
-          _friendlyError(error),
-        ),
-      );
+      emit(ApplicationFailure(_friendlyError(error)));
 
       return false;
     }
@@ -121,8 +97,7 @@ class ApplicationCubit
     required String notes,
   }) async {
     try {
-      await _applicationRepository
-          .scheduleInterview(
+      await _applicationRepository.scheduleInterview(
         applicationId: applicationId,
         interviewDateTime: interviewDateTime,
         interviewMode: interviewMode,
@@ -132,30 +107,19 @@ class ApplicationCubit
 
       return true;
     } catch (error) {
-      emit(
-        ApplicationFailure(
-          _friendlyError(error),
-        ),
-      );
+      emit(ApplicationFailure(_friendlyError(error)));
 
       return false;
     }
   }
 
-  Future<bool> withdrawApplication(
-    String applicationId,
-  ) async {
+  Future<bool> withdrawApplication(String applicationId) async {
     try {
-      await _applicationRepository
-          .withdrawApplication(applicationId);
+      await _applicationRepository.withdrawApplication(applicationId);
 
       return true;
     } catch (error) {
-      emit(
-        ApplicationFailure(
-          _friendlyError(error),
-        ),
-      );
+      emit(ApplicationFailure(_friendlyError(error)));
 
       return false;
     }
@@ -178,8 +142,7 @@ class ApplicationCubit
           return 'Firestore needs an index for this query. Open the link shown in the terminal to create it.';
 
         default:
-          return error.message ??
-              'A Firebase error occurred.';
+          return error.message ?? 'A Firebase error occurred.';
       }
     }
 

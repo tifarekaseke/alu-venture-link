@@ -27,10 +27,7 @@ class BookmarkLoaded extends BookmarkState {
   });
 
   @override
-  List<Object?> get props => [
-        savedOpportunityIds.toList(),
-        savedOpportunities,
-      ];
+  List<Object?> get props => [savedOpportunityIds.toList(), savedOpportunities];
 }
 
 class BookmarkFailure extends BookmarkState {
