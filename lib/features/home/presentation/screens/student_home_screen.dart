@@ -2,21 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_theme.dart';
-import '../../../applications/presentation/screens/my_applications_screen.dart';
 import '../../../applications/presentation/screens/opportunity_detail_screen.dart';
 import '../../../auth/data/models/app_user.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../bookmarks/presentation/cubit/bookmark_cubit.dart';
 import '../../../bookmarks/presentation/cubit/bookmark_state.dart';
-import '../../../bookmarks/presentation/screens/saved_opportunities_screen.dart';
+import '../../../notifications/presentation/cubit/notification_cubit.dart';
+import '../../../notifications/presentation/screens/notifications_screen.dart';
+import '../../../notifications/presentation/widgets/notification_bell.dart';
 import '../../../opportunities/data/models/opportunity_model.dart';
 import '../../../opportunities/presentation/cubit/opportunity_cubit.dart';
 import '../../../opportunities/presentation/cubit/opportunity_state.dart';
 import '../../../opportunities/presentation/widgets/opportunity_card.dart';
-import '../../../profiles/presentation/screens/student_profile_screen.dart';
-import '../../../notifications/presentation/cubit/notification_cubit.dart';
-import '../../../notifications/presentation/screens/notifications_screen.dart';
-import '../../../notifications/presentation/widgets/notification_bell.dart';
 
 class StudentHomeScreen extends StatefulWidget {
   final AppUser user;
@@ -31,7 +28,8 @@ class StudentHomeScreen extends StatefulWidget {
       _StudentHomeScreenState();
 }
 
-class _StudentHomeScreenState extends State<StudentHomeScreen> {
+class _StudentHomeScreenState
+    extends State<StudentHomeScreen> {
   final _searchController = TextEditingController();
 
   String _selectedWorkMode = 'All';
@@ -50,8 +48,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
         .watchSavedOpportunities(widget.user.uid);
 
     context
-    .read<NotificationCubit>()
-    .watchNotifications(widget.user.uid);
+        .read<NotificationCubit>()
+        .watchNotifications(widget.user.uid);
   }
 
   @override
@@ -68,7 +66,9 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
 
     return opportunities.where((opportunity) {
       final matchesSearch = query.isEmpty ||
-          opportunity.title.toLowerCase().contains(query) ||
+          opportunity.title
+              .toLowerCase()
+              .contains(query) ||
           opportunity.startupName
               .toLowerCase()
               .contains(query) ||
@@ -79,12 +79,12 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
 
       final matchesWorkMode =
           _selectedWorkMode == 'All' ||
-              opportunity.workMode == _selectedWorkMode;
+              opportunity.workMode ==
+                  _selectedWorkMode;
 
-      final matchesType =
-          _selectedType == 'All' ||
-              opportunity.opportunityType ==
-                  _selectedType;
+      final matchesType = _selectedType == 'All' ||
+          opportunity.opportunityType ==
+              _selectedType;
 
       return matchesSearch &&
           matchesWorkMode &&
@@ -131,34 +131,17 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
       });
     }).length;
 
-    return ((matchedSkills / requiredSkills.length) * 100)
+    return ((matchedSkills / requiredSkills.length) *
+            100)
         .round();
   }
 
-  void _openMyApplications() {
+  void _openNotifications() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => MyApplicationsScreen(
+        builder: (_) => NotificationsScreen(
           user: widget.user,
         ),
-      ),
-    );
-  }
-
-  void _openSavedOpportunities() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => SavedOpportunitiesScreen(
-          user: widget.user,
-        ),
-      ),
-    );
-  }
-
-  void _openStudentProfile() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => const StudentProfileScreen(),
       ),
     );
   }
@@ -195,36 +178,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
           title: const Text('ALU VentureLink'),
           actions: [
             NotificationBell(
-  onPressed: () {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => NotificationsScreen(
-          user: widget.user,
-        ),
-      ),
-    );
-  },
-),
-            IconButton(
-              tooltip: 'Saved opportunities',
-              onPressed: _openSavedOpportunities,
-              icon: const Icon(
-                Icons.bookmark_border_outlined,
-              ),
-            ),
-            IconButton(
-              tooltip: 'My applications',
-              onPressed: _openMyApplications,
-              icon: const Icon(
-                Icons.assignment_outlined,
-              ),
-            ),
-            IconButton(
-              tooltip: 'My profile',
-              onPressed: _openStudentProfile,
-              icon: const Icon(
-                Icons.person_outline,
-              ),
+              onPressed: _openNotifications,
             ),
             IconButton(
               tooltip: 'Sign out',
@@ -248,204 +202,296 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
             }
           },
           builder: (context, state) {
-            return ListView(
-              padding: const EdgeInsets.fromLTRB(
-                24,
-                16,
-                24,
-                32,
-              ),
-              children: [
-                Text(
-                  'Hello, $firstName 👋',
-                  style: const TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w800,
-                    color: AppTheme.navy,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Discover startup opportunities created by ALU founders.',
-                  style: TextStyle(
-                    fontSize: 16,
-                    height: 1.5,
-                    color: AppTheme.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: 24),
+            return RefreshIndicator(
+              onRefresh: () async {
+                context
+                    .read<OpportunityCubit>()
+                    .watchOpenOpportunities();
 
-                TextField(
-                  controller: _searchController,
-                  onChanged: (_) {
-                    setState(() {});
-                  },
-                  decoration: const InputDecoration(
-                    hintText:
-                        'Search by role, startup, or skill...',
-                    prefixIcon: Icon(Icons.search),
-                  ),
+                await Future<void>.delayed(
+                  const Duration(milliseconds: 500),
+                );
+              },
+              child: ListView(
+                physics:
+                    const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(
+                  20,
+                  16,
+                  20,
+                  32,
                 ),
-
-                const SizedBox(height: 14),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: _FilterDropdown(
-                        value: _selectedWorkMode,
-                        items: const [
-                          'All',
-                          'On-campus',
-                          'Remote',
-                          'Hybrid',
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedWorkMode = value;
-                          });
-                        },
-                      ),
+                children: [
+                  Text(
+                    'Hello, $firstName 👋',
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.navy,
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _FilterDropdown(
-                        value: _selectedType,
-                        items: const [
-                          'All',
-                          'Internship',
-                          'Volunteer',
-                          'Project-based',
-                          'Part-time',
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedType = value;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 24),
-
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: AppTheme.navy,
-                    borderRadius:
-                        BorderRadius.circular(24),
                   ),
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.auto_awesome,
-                        color: AppTheme.gold,
-                        size: 30,
-                      ),
-                      SizedBox(width: 14),
-                      Expanded(
-                        child: Text(
-                          'Complete your profile skills to receive personalized opportunity match percentages.',
-                          style: TextStyle(
-                            color: Colors.white,
-                            height: 1.45,
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Discover practical opportunities with verified ALU student ventures.',
+                    style: TextStyle(
+                      fontSize: 16,
+                      height: 1.5,
+                      color: AppTheme.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: AppTheme.navy,
+                      borderRadius:
+                          BorderRadius.circular(24),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withAlpha(25),
+                            borderRadius:
+                                BorderRadius.circular(16),
                           ),
+                          child: const Icon(
+                            Icons.auto_awesome,
+                            color: AppTheme.gold,
+                            size: 28,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Smart opportunity matching',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17,
+                                  fontWeight:
+                                      FontWeight.w800,
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                'Your profile skills are compared with each role to calculate a transparent match score.',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  height: 1.4,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 22),
+
+                  TextField(
+                    controller: _searchController,
+                    onChanged: (_) {
+                      setState(() {});
+                    },
+                    decoration: InputDecoration(
+                      hintText:
+                          'Search roles, startups or skills',
+                      prefixIcon:
+                          const Icon(Icons.search),
+                      suffixIcon:
+                          _searchController.text.isEmpty
+                              ? null
+                              : IconButton(
+                                  tooltip: 'Clear search',
+                                  onPressed: () {
+                                    _searchController
+                                        .clear();
+
+                                    setState(() {});
+                                  },
+                                  icon: const Icon(
+                                    Icons.close,
+                                  ),
+                                ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _FilterDropdown(
+                          value: _selectedWorkMode,
+                          items: const [
+                            'All',
+                            'On-campus',
+                            'Remote',
+                            'Hybrid',
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedWorkMode = value;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _FilterDropdown(
+                          value: _selectedType,
+                          items: const [
+                            'All',
+                            'Internship',
+                            'Volunteer',
+                            'Project-based',
+                            'Part-time',
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedType = value;
+                            });
+                          },
                         ),
                       ),
                     ],
                   ),
-                ),
 
-                const SizedBox(height: 28),
+                  const SizedBox(height: 28),
 
-                const Text(
-                  'Open opportunities',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    color: AppTheme.navy,
-                  ),
-                ),
-
-                const SizedBox(height: 14),
-
-                if (state is OpportunityLoading)
-                  const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(24),
-                      child:
-                          CircularProgressIndicator(),
-                    ),
-                  )
-                else if (state is OpportunityLoaded &&
-                    _filterOpportunities(
-                      state.opportunities,
-                    ).isEmpty)
-                  const _EmptyStudentState()
-                else if (state is OpportunityLoaded)
-                  ..._filterOpportunities(
-                    state.opportunities,
-                  ).map(
-                    (opportunity) {
-                      final isSaved =
-                          savedIds.contains(
-                        opportunity.id,
-                      );
-
-                      final matchPercentage =
-                          _calculateMatchPercentage(
-                        widget.user,
-                        opportunity,
-                      );
-
-                      return OpportunityCard(
-                        opportunity: opportunity,
-                        matchPercentage:
-                            matchPercentage,
-                        trailing: IconButton(
-                          tooltip:
-                              isSaved ? 'Unsave' : 'Save',
-                          onPressed: () {
-                            context
-                                .read<BookmarkCubit>()
-                                .toggleBookmark(
-                                  userId:
-                                      widget.user.uid,
-                                  opportunity:
-                                      opportunity,
-                                );
-                          },
-                          icon: Icon(
-                            isSaved
-                                ? Icons.bookmark
-                                : Icons
-                                    .bookmark_border_outlined,
-                            color: isSaved
-                                ? AppTheme.purple
-                                : null,
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Open opportunities',
+                          style: TextStyle(
+                            fontSize: 21,
+                            fontWeight:
+                                FontWeight.w800,
+                            color: AppTheme.navy,
                           ),
                         ),
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) =>
-                                  OpportunityDetailScreen(
-                                student:
-                                    widget.user,
-                                opportunity:
-                                    opportunity,
-                              ),
+                      ),
+                      if (state is OpportunityLoaded)
+                        Container(
+                          padding:
+                              const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color:
+                                const Color(0xFFF1EDFF),
+                            borderRadius:
+                                BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            _filterOpportunities(
+                              state.opportunities,
+                            ).length.toString(),
+                            style: const TextStyle(
+                              color: AppTheme.purple,
+                              fontWeight:
+                                  FontWeight.w800,
                             ),
-                          );
-                        },
-                      );
-                    },
-                  )
-                else
-                  const SizedBox.shrink(),
-              ],
+                          ),
+                        ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  if (state is OpportunityLoading ||
+                      state is OpportunityInitial)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(30),
+                        child:
+                            CircularProgressIndicator(),
+                      ),
+                    )
+                  else if (state is OpportunityLoaded &&
+                      _filterOpportunities(
+                        state.opportunities,
+                      ).isEmpty)
+                    const _EmptyStudentState()
+                  else if (state is OpportunityLoaded)
+                    ..._filterOpportunities(
+                      state.opportunities,
+                    ).map(
+                      (opportunity) {
+                        final isSaved =
+                            savedIds.contains(
+                          opportunity.id,
+                        );
+
+                        final matchPercentage =
+                            _calculateMatchPercentage(
+                          widget.user,
+                          opportunity,
+                        );
+
+                        return OpportunityCard(
+                          opportunity: opportunity,
+                          matchPercentage:
+                              matchPercentage,
+                          trailing: IconButton(
+                            tooltip: isSaved
+                                ? 'Remove from saved'
+                                : 'Save opportunity',
+                            onPressed: () {
+                              context
+                                  .read<BookmarkCubit>()
+                                  .toggleBookmark(
+                                    userId:
+                                        widget.user.uid,
+                                    opportunity:
+                                        opportunity,
+                                  );
+                            },
+                            icon: Icon(
+                              isSaved
+                                  ? Icons.bookmark
+                                  : Icons
+                                      .bookmark_border_outlined,
+                              color: isSaved
+                                  ? AppTheme.purple
+                                  : null,
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) =>
+                                    OpportunityDetailScreen(
+                                  student:
+                                      widget.user,
+                                  opportunity:
+                                      opportunity,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    )
+                  else if (state is OpportunityFailure)
+                    _ErrorState(
+                      message: state.message,
+                    )
+                  else
+                    const SizedBox.shrink(),
+                ],
+              ),
             );
           },
         ),
@@ -468,8 +514,9 @@ class _FilterDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: 14),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 14,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -510,7 +557,7 @@ class _EmptyStudentState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(26),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
@@ -522,7 +569,7 @@ class _EmptyStudentState extends StatelessWidget {
         children: [
           Icon(
             Icons.search_off_outlined,
-            size: 42,
+            size: 48,
             color: AppTheme.purple,
           ),
           SizedBox(height: 14),
@@ -536,11 +583,48 @@ class _EmptyStudentState extends StatelessWidget {
           ),
           SizedBox(height: 8),
           Text(
-            'Try changing your search or filters.',
+            'Try changing the search phrase or filters.',
             textAlign: TextAlign.center,
             style: TextStyle(
               height: 1.5,
               color: AppTheme.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ErrorState extends StatelessWidget {
+  final String message;
+
+  const _ErrorState({
+    required this.message,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(26),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFEEEE),
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 45,
+            color: Colors.red.shade700,
+          ),
+          const SizedBox(height: 13),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              height: 1.5,
+              color: Colors.red.shade700,
             ),
           ),
         ],

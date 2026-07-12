@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../home/presentation/screens/student_home_screen.dart';
+import '../../../home/presentation/screens/student_navigation_screen.dart';
 import '../../../startups/presentation/screens/admin_verification_screen.dart';
 import '../../../startups/presentation/screens/startup_dashboard_screen.dart';
 import '../cubit/auth_cubit.dart';
@@ -28,15 +28,12 @@ class AuthGate extends StatelessWidget {
             );
           }
 
-          return StudentHomeScreen(
+          return StudentNavigationScreen(
             user: state.user,
           );
         }
 
-        // Keep the login screen visible during login and after login errors.
-        // LoginScreen already shows loading indicators and error snackbars.
         if (state is AuthUnauthenticated ||
-            state is AuthLoading ||
             state is AuthFailure) {
           return const LoginScreen();
         }
