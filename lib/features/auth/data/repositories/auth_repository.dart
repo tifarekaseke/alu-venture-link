@@ -17,6 +17,10 @@ class AuthRepository {
     return _firebaseAuth.authStateChanges();
   }
 
+  User? get currentUser {
+    return _firebaseAuth.currentUser;
+  }
+
   Future<void> register({
     required String fullName,
     required String email,
@@ -110,19 +114,46 @@ class AuthRepository {
   }
 
   Future<AppUser?> getUserProfile(String uid) async {
-    final document = await _firestore
-        .collection('users')
-        .doc(uid)
-        .get()
+    final reference = _firestore.collection('users').doc(uid);
+
+    // First try the locally cached profile.
+    try {
+      final cachedDocument = await reference
+          .get(const GetOptions(source: Source.cache))
+          .timeout(const Duration(seconds: 3));
+
+      final cachedUser = _mapUser(cachedDocument);
+
+      if (cachedUser != null) {
+        return cachedUser;
+      }
+    } on FirebaseException {
+      // A cache miss can happen on a fresh installation.
+    } on TimeoutException {
+      // Continue and request the document from the server.
+    }
+
+    // If the profile is not cached, request it from Firestore.
+    final serverDocument = await reference
+        .get(const GetOptions(source: Source.server))
         .timeout(
-          const Duration(seconds: 20),
+          const Duration(seconds: 15),
           onTimeout: () {
             throw TimeoutException(
-              'Could not load your profile. Check your internet connection.',
+              'Could not load your profile from Cloud Firestore. '
+              'Check the emulator internet connection and try again.',
             );
           },
         );
 
+    return _mapUser(serverDocument);
+  }
+
+  Stream<AppUser?> watchUserProfile(String uid) {
+    return _firestore.collection('users').doc(uid).snapshots().map(_mapUser);
+  }
+
+  AppUser? _mapUser(DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data();
 
     if (!document.exists || data == null) {
@@ -130,17 +161,5 @@ class AuthRepository {
     }
 
     return AppUser.fromMap(document.id, data);
-  }
-
-  Stream<AppUser?> watchUserProfile(String uid) {
-    return _firestore.collection('users').doc(uid).snapshots().map((document) {
-      final data = document.data();
-
-      if (!document.exists || data == null) {
-        return null;
-      }
-
-      return AppUser.fromMap(document.id, data);
-    });
   }
 }
