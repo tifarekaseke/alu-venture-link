@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1052212286861",
+    "project_id": "alu-venture-link",
+    "storage_bucket": "alu-venture-link.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1052212286861:android:79cd8332cdbb738c9659c4",
+        "android_client_info": {
+          "package_name": "com.example.alu_venture_link"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhWzb39VrC-Hn5v3VZCbaVObourBGHWfM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
