@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../home/presentation/screens/student_navigation_screen.dart';
 import '../../../startups/presentation/screens/admin_verification_screen.dart';
-import '../../../startups/presentation/screens/startup_dashboard_screen.dart';
+import '../../../startups/presentation/screens/startup_navigation_screen.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'login_screen.dart';
@@ -23,7 +23,7 @@ class AuthGate extends StatelessWidget {
           }
 
           if (state.user.isStartup) {
-            return StartupDashboardScreen(
+            return StartupNavigationScreen(
               user: state.user,
             );
           }
